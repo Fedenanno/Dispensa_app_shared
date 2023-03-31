@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    
+    <title>Django app</title>
+
+    
+    <style media="screen">
+        .login-form-container {
+            width: 400px;
+            margin: auto;
+        }
+        .registration-form-container {
+            width: 400px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="auth-box text-center">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>
