@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'webpack_loader',
     
     'user',
+    'dispense',
     #'alimenti',
 
     #per https
