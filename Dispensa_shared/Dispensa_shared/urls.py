@@ -49,6 +49,9 @@ urlpatterns = [
 
     #url to user api
     path('api/', include('user.api.urls')),
+    
+    #url to dispense api
+    path('api/', include('dispense.api.urls')),
 
     #url to login via browser api
     path('api-auth/', include('rest_framework.urls')),

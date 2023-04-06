@@ -20,6 +20,9 @@ class Dispensa(models.Model):
         verbose_name = "Dispensa"
         verbose_name_plural = "Dispense"
 
+    def __str__(self):
+        return "id: {}, nome: {}".format(self.id_dispensa, self.nome_dispensa)
+
 
 #custom through model: from Dispenta to User, form M to N relationship
 class DispensaUser(models.Model):
@@ -40,6 +43,9 @@ class DispensaUser(models.Model):
                 fields=['id_user', 'id_dispensa'], name='unique_disp_user'
             )
         ]
+
+    def __str__(self):
+        return "user: {}(id: {}), dispensa: {}(id: {})".format(self.id_user.username, self.id_user.id, self.id_dispensa.nome_dispensa, self.id_dispensa.id_dispensa)
 
 class Categorie(models.Model):
     
