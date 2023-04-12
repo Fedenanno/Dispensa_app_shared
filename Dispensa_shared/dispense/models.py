@@ -7,6 +7,7 @@ class Dispensa(models.Model):
     #PK
     id_dispensa = models.AutoField(primary_key=True, unique=True)
 
+    #da eliminare? tutte le politiche di m to n le sto implementando con i custom manualmente
     user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='user', through='DispensaUser', through_fields=('id_dispensa', 'id_user'))
 
     nome_dispensa = models.CharField(max_length=50, blank=False, null=False)

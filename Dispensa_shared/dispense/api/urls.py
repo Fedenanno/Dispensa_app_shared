@@ -6,7 +6,11 @@ from . import views as vw
 #router = DefaultRouter()
 
 urlpatterns = [
-    #path per la view DispensaViewSet che accetta i due query params list e id_dispensa facoltativi
-    path('dispense/', vw.DispensaViewSet.as_view({'get': 'list', 'post': 'create'}), name='dispense'),
+    #path per l'API /dispense/
+    path('dispense/<int:id_dispensa>', vw.DispensaViewSet.as_view({'get': 'list', 'put': 'update', 'delete' : 'destroy'}), name='dispense'),
+    path('dispense/', vw.DispensaViewSetList.as_view({'get': 'list', 'post': 'create'}) , name='dispense_list'),
+
+    #path per L'api /dispense/shared/
+    path('dispense/shared/<int:id_dispensa>', vw.DispensaShareViewSet.as_view({'post': 'create', 'delete' : 'destroy'}), name='dispense_shared'),
 
 ]

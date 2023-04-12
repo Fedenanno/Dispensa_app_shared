@@ -9,38 +9,42 @@ class IsAdminOrDenied(permissions.BasePermission):
         # non consentiamo nemmeno la GET, HEAD o OPTIONS requests.
         return request.user.is_staff
 
-
-
-#TODO CONTROLLARE
 #se esiste una riga con id_dispensa e id_user nella tabella DispensaUser allora la dispensa è condivisa, l'utente puo modificare la dispensa, altrimenti no
 class DispensaIsShared(permissions.BasePermission):
     def has_permission(self, request, view):
         #controlla se l'id dello user che fa la richiesta è associato ad un id_dispensa nella tabella DispensaUser
-        print("ID DISPENSA "+ request.query_params.get('id_dispensa'))
-        print("ID USER "+ str(request.user.id))
-        ds = DispensaUser.objects.filter(id_user=request.user, id_dispensa=request.query_params.get('id_dispensa'))
+        ds = DispensaUser.objects.filter(id_user=request.user, id_dispensa=view.kwargs['id_dispensa'])
         if ds.exists():
-            print("DISPENSA CONDIVISA "+ str(ds))
             return True
-        print("DISPENSA NON CONDIVISA "+ str(ds))
         return False
     
 class DispensaIsAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         #controlla se è proprietario, controllando il campo inserito_da_dispensa della tabella Dispensa
-        d = Dispensa.objects.filter(id_dispensa=request.query_params.get('id_dispensa'), inserito_da_dispensa=request.user)
+        d = Dispensa.objects.filter(id_dispensa=view.kwargs['id_dispensa'], inserito_da=request.user)
         if d.exists():
             return True
+    
+class DispensaIsAdminOrOnlyDelete(permissions.BasePermission):
+    def has_permission(self, request, view):
+        #controlla se è proprietario, controllando il campo inserito_da_dispensa della tabella Dispensa
+        d = Dispensa.objects.filter(id_dispensa=view.kwargs['id_dispensa'], inserito_da=request.user)
+        if d.exists():
+            return True
+        #se non è proprietario controlla se la richiesta è una delete
+        if request.method == 'DELETE':
+            return True
+        return False
         
 class DispensaIsSharedOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         #controlla se l'id dello user che fa la richiesta è associato ad un id_dispensa nella tabella DispensaUser
-        ds = DispensaUser.objects.filter(id_user=request.user, id_dispensa=request.query_params.get('id_dispensa'))
+        ds = DispensaUser.objects.filter(id_user=request.user, id_dispensa=view.kwargs['id_dispensa'])
         if ds.exists() or request.user.is_staff:
             return True
         
         #se non è condivisa controlla se è proprietario, controllando il campo inserito_da_dispensa della tabella Dispensa
-        d = Dispensa.objects.filter(id_dispensa=request.query_params.get('id_dispensa'), inserito_da_dispensa=request.user)
+        d = Dispensa.objects.filter(id_dispensa=view.kwargs['id_dispensa'], inserito_da_dispensa=request.user)
         if d.exists():
             return True
         
