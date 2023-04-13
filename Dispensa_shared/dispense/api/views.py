@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from user.models import CustomUser
 
 from . import exceptions as exc
-from .permissions import DispensaIsShared, DispensaIsAdmin, DispensaIsSharedOrAdmin, DispensaIsAdminOrOnlyDelete
+from .permissions import DispensaIsShared, DispensaIsAdmin, DispensaIsSharedOrOwner, DispensaIsOwnerOrOnlyDelete, DispensaIsOwner
 from dispense.models import Dispensa, DispensaUser, Categorie, Prodotti, Elementi
 from . import serializers as srz
 
@@ -118,11 +118,15 @@ def isShared(user, dispensa):
     except:
         return False
 
+#TEST: OK
 class DispensaShareViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, DispensaIsAdminOrOnlyDelete]
+    permission_classes = [IsAuthenticated, DispensaIsOwnerOrOnlyDelete]
     serializer_class = srz.DispensaUserSharedSerializer
     pagination_class = None
+    #queryset = DispensaUser.objects.all()
+    lookup_field = "id_dispensa"
 
+    # TEST: OK
     # aggiunge una dispensa alla lista delle dispense condivise impostano il campo Dispensa.condivisa a true
     def perform_create(self, serializer):
         # campi necessari per arrivare fino a qui
@@ -130,6 +134,8 @@ class DispensaShareViewSet(viewsets.ModelViewSet):
         dispensa = self.kwargs['id_dispensa']
         # campo gia controllato dal serializer
         new_user = self.request.data['id_user']
+        admin_p = self.request.query_params.get('admin')
+
 
         # controlla che la dispensa non sia già condivisa con l'utente
         if isShared(new_user, dispensa):
@@ -152,21 +158,60 @@ class DispensaShareViewSet(viewsets.ModelViewSet):
         # crea una entry con id_dispensa e new_user specificati nella tabella DispensaUser
         try:
             serializer.save(id_dispensa=dispensa_obj, id_user=new_user, condivisa_da=user)
+
+            #imposta il nuovo utente come admin della dispensa
+            if admin_p == 'True':
+                DispensaUser.objects.filter(id_dispensa=dispensa, id_user=new_user).update(admin=True)
+
             # imposta il campo condivisa a true
             Dispensa.objects.filter(id_dispensa=dispensa).update(condivisa=True)
             return Response("Dispensa condivisa con: "+new_user.username, status.HTTP_200_OK)
         except:
             return Response("Condivisione dispensa fallita", status.HTTP_400_BAD_REQUEST)
 
+    #TEST: OK
+    def update(self, serializer, pk="id_dispensa", *args, **kwargs):
+        user = self.request.user
+        dispensa = self.kwargs['id_dispensa']
+        new_user = self.request.data['id_user']
+        admin_p = self.request.query_params.get('admin')
+
+        #controlla che chi fa la richiesta sia il proprietario della dispensa
+        if Dispensa.objects.get(id_dispensa=dispensa).inserito_da == user:
+            if admin_p == 'True':
+                DispensaUser.objects.filter(id_dispensa=dispensa, id_user=new_user).update(admin=True)
+                return Response("Utente impostato admin", status.HTTP_200_OK)            
+            elif admin_p == 'False':
+                DispensaUser.objects.filter(id_dispensa=dispensa, id_user=new_user).update(admin=False)
+                return Response("Utente tolto admin", status.HTTP_200_OK)
+            else:
+                raise exc.QueryParamsAdminDispensaNotFound()
+
     # rimuove una dispensa dalla lista delle dispense condivise impostano.
     # se l'utente che fa la richiesta è il proprietario, rimuove tutte le occorrenze di quella dispensa da DispensaUser e imposta il campo condivisa a false
 
-    def destroy(self, request, *args, **kwargs):
+    #TEST: OK TODO cambiare id_user da payload a query params
+    def destroy(self, serializer, pk="id_dispensa", *args, **kwargs):
         user = self.request.user
         dispensa = self.kwargs['id_dispensa']
-        # controlla che l'utente che fa la richiesta sia chi ha creato la dipsensa
+        new_user = None
+
+        # controlla che l'utente che fa la richiesta sia chi ha creato la dipsensa (proprietario)
         if Dispensa.objects.get(id_dispensa=dispensa).inserito_da == user:
-            # rimuove tutte le entry con id_dispensa specificato dalla tabella DispensaUser tranne quella dove id_user = id_user
+            #se viene passato il payload con l'id dell'utente da rimuovere
+            try:
+                new_user = self.request.data['id_user']
+            except:
+                new_user = None
+
+            try:
+                if new_user is not None:
+                    DispensaUser.objects.filter(id_dispensa=dispensa, id_user=new_user).delete()
+                    return Response("Dispensa non piu condivisa con l'utente", status.HTTP_200_OK)
+            except:
+                return Response("rimozione utente fallita, riprova piu tardi", status.HTTP_400_BAD_REQUEST)
+    
+            # altrimenti, rimuove tutte le entry con id_dispensa specificato dalla tabella DispensaUser tranne quella dove id_user = id_user
             try:
                 DispensaUser.objects.filter(id_dispensa=dispensa).exclude(id_user=user).delete()
                 # imposta il campo condivisa a false
@@ -176,6 +221,7 @@ class DispensaShareViewSet(viewsets.ModelViewSet):
                 return Response("rimozione dispensa condivisa fallita, riprova piu tardi", status.HTTP_400_BAD_REQUEST)
         # se l'utente non è admin o non ha creato la dispensa, prova a togliere la condivisione
         else:
+            
             # rimuove la entry con id_dispensa e id_user specificati dalla tabella DispensaUser
             if DispensaUser.objects.filter(id_dispensa=dispensa, id_user=user).delete():
                 return Response("dispensa rimossa dalla propria lista con successo", status.HTTP_200_OK)
@@ -183,4 +229,50 @@ class DispensaShareViewSet(viewsets.ModelViewSet):
                 return Response("rimozione dispensa condivisa fallita", status.HTTP_400_BAD_REQUEST)
 
 
-#
+# ---------- Categoria ------------
+# se l'utente è admin (o propietario) puo inserire, modificare e cancellare le categorie
+# se l'utente non è admin può solo vedere le categorie
+def isAdmin(self):
+    return DispensaUser.objects.filter(id_dispensa=self.kwargs['id_dispensa'], id_user=self.request.user, admin=True).exists() or Dispensa.objects.get(id_dispensa=self.kwargs['id_dispensa']).inserito_da == self.request.user
+    
+
+class CategorieViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, DispensaIsShared]
+    serializer_class = srz.CategorieSerializer
+    pagination_class = None
+    lookup_field = 'id_dispensa'
+    
+
+    def get_queryset(self):
+        return Categorie.objects.filter(id_dispensa=self.kwargs['id_dispensa']).order_by('nome_categoria')
+    
+    def perform_create(self, serializer):
+        try:
+            if isAdmin(self):
+                serializer.save(id_dispensa=Dispensa.objects.get(id_dispensa=self.kwargs['id_dispensa']), inserito_da=self.request.user)
+                return Response("Categoria creata con successo", status.HTTP_200_OK)
+            raise exc.UserIsNotAdmin()
+        except:
+            raise exc.CategoriaAlreadyExists()
+    
+
+class CategorieViewSetId(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, DispensaIsShared]
+    serializer_class = srz.CategorieSerializer
+    pagination_class = None
+    lookup_field = 'id_dispensa'
+
+    def get_queryset(self):
+        return Categorie.objects.filter(id_dispensa=self.kwargs['id_dispensa'], id_categoria=self.kwargs['id_categoria'])
+    
+    def perform_update(self, serializer):
+        if isAdmin(self):
+            serializer.save(id_dispensa=Dispensa.objects.get(id_dispensa=self.kwargs['id_dispensa']))
+            return Response("Categoria modificata con successo", status.HTTP_200_OK)
+        raise exc.UserIsNotAdmin()
+    
+    def destroy(self, serializer, pk="id_categoria", *args, **kwargs):
+        if isAdmin(self):
+            Categorie.objects.filter(id_categoria=self.kwargs['id_categoria']).delete()
+            return Response("Categoria eliminata con successo", status.HTTP_200_OK)
+        raise exc.UserIsNotAdmin()

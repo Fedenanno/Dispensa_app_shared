@@ -2,7 +2,7 @@ from rest_framework import serializers
 from dispense.models import Dispensa, DispensaUser, Categorie, Prodotti, Elementi
 from user.api.serializers import CustomUserSerializer
 
-#singola dispensa con tutti i suoi campi
+#-------- Dispensa --------
 class DispensaSerializer(serializers.ModelSerializer):
 
     inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)
@@ -26,3 +26,15 @@ class DispensaUserSharedSerializer(serializers.ModelSerializer):
         model = DispensaUser
         
         fields = ['id_user']
+
+#-------- Categorie --------
+class CategorieSerializer(serializers.ModelSerializer):
+    
+        inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)
+    
+        class Meta:
+            model = Categorie
+            fields = '__all__'
+    
+        def get_inserito_da(self, obj):
+            return obj.inserito_da.username

@@ -18,14 +18,21 @@ class DispensaIsShared(permissions.BasePermission):
             return True
         return False
     
-class DispensaIsAdmin(permissions.BasePermission):
+class DispensaIsOwner(permissions.BasePermission):
     def has_permission(self, request, view):
         #controlla se è proprietario, controllando il campo inserito_da_dispensa della tabella Dispensa
         d = Dispensa.objects.filter(id_dispensa=view.kwargs['id_dispensa'], inserito_da=request.user)
         if d.exists():
             return True
+        
+class DispensaIsAdmin(permissions.BasePermission):
+    def has_permission(self, request, view):
+        d = DispensaUser.objects.filter(id_dispensa=view.kwargs['id_dispensa'], user=request.user)
+        if d.exists() and d.admin == True:
+            return True
+        
     
-class DispensaIsAdminOrOnlyDelete(permissions.BasePermission):
+class DispensaIsOwnerOrOnlyDelete(permissions.BasePermission):
     def has_permission(self, request, view):
         #controlla se è proprietario, controllando il campo inserito_da_dispensa della tabella Dispensa
         d = Dispensa.objects.filter(id_dispensa=view.kwargs['id_dispensa'], inserito_da=request.user)
@@ -36,7 +43,7 @@ class DispensaIsAdminOrOnlyDelete(permissions.BasePermission):
             return True
         return False
         
-class DispensaIsSharedOrAdmin(permissions.BasePermission):
+class DispensaIsSharedOrOwner(permissions.BasePermission):
     def has_permission(self, request, view):
         #controlla se l'id dello user che fa la richiesta è associato ad un id_dispensa nella tabella DispensaUser
         ds = DispensaUser.objects.filter(id_user=request.user, id_dispensa=view.kwargs['id_dispensa'])
@@ -47,6 +54,9 @@ class DispensaIsSharedOrAdmin(permissions.BasePermission):
         d = Dispensa.objects.filter(id_dispensa=view.kwargs['id_dispensa'], inserito_da_dispensa=request.user)
         if d.exists():
             return True
+        
+#------- Categorie -------
+
         
 
 
