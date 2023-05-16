@@ -30,11 +30,35 @@ class DispensaUserSharedSerializer(serializers.ModelSerializer):
 #-------- Categorie --------
 class CategorieSerializer(serializers.ModelSerializer):
     
-        inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)
+    inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)
+
+    class Meta:
+        model = Categorie
+        fields = '__all__'
     
-        class Meta:
-            model = Categorie
-            fields = '__all__'
-    
-        def get_inserito_da(self, obj):
-            return obj.inserito_da.username
+    def get_inserito_da(self, obj):
+        return obj.inserito_da.username
+
+#-------- Prodotti --------
+class ProdottiSerializer(serializers.ModelSerializer):
+        
+    inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)
+        
+    class Meta:
+        model = Prodotti
+        fields = '__all__'
+        
+    def get_inserito_da(self, obj):
+        return obj.inserito_da.username
+        
+#-------- Elementi --------
+class ElementiSerializer(serializers.ModelSerializer):
+                    
+    inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)            
+                    
+    class Meta:
+        model = Elementi
+        fields = '__all__'
+                
+    def get_inserito_da(self, obj):
+        return obj.inserito_da.username 

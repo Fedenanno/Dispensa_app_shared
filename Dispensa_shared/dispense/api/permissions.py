@@ -1,5 +1,5 @@
 from rest_framework import permissions
-from dispense.models import DispensaUser, Dispensa
+from dispense.models import DispensaUser, Dispensa, Prodotti
 
 #Puo avere accesso solo se l'utente è admin del sistema
 class IsAdminOrDenied(permissions.BasePermission):
@@ -54,7 +54,16 @@ class DispensaIsSharedOrOwner(permissions.BasePermission):
         d = Dispensa.objects.filter(id_dispensa=view.kwargs['id_dispensa'], inserito_da_dispensa=request.user)
         if d.exists():
             return True
-        
+
+#------- Prodotti -------
+class ProdottoIsInDispensa(permissions.BasePermission):
+    def has_permission(self, request, view):
+        #controlla che l'id del prodotto è associato all'id della dispensa
+        d = Prodotti.objects.filter(id_dispensa=view.kwargs['id_dispensa'], id_prodotto=view.kwargs['id_prodotto'])
+        if d.exists():
+            return True
+        return False
+
 #------- Categorie -------
 
         

@@ -7,14 +7,30 @@ from . import views as vw
 
 urlpatterns = [
     #path per l'API /dispense/
-    path('dispense/<int:id_dispensa>', vw.DispensaViewSet.as_view({'get': 'list', 'put': 'update', 'delete' : 'destroy'}), name='dispense'),
-    path('dispense/', vw.DispensaViewSetList.as_view({'get': 'list', 'post': 'create'}) , name='dispense_list'),
+    #?owner: true | false
+    path('dispense/', vw.DispensaViewSet.as_view({'get': 'list', 'post': 'create'}), name='dispense'),
+    path('dispense/<int:id_dispensa>/', vw.DispensaViewSetId.as_view({'get': 'list', 'put': 'update', 'delete' : 'destroy'}) , name='dispense_list'),
 
     #path per l'API /dispense/shared/
-    path('dispense/shared/<int:id_dispensa>', vw.DispensaShareViewSet.as_view({'post': 'create', 'put': 'update', 'delete' : 'destroy'}), name='dispense_shared'),
+    #?admin: true | false
+    path('dispense/<int:id_dispensa>/shared/', vw.DispensaShareViewSet.as_view({'post': 'create', 'put': 'update', 'delete' : 'destroy'}), name='dispense_shared'),
 
     #path per l'API /dispense/categorie/
-    path('dispense/categorie/<int:id_dispensa>', vw.CategorieViewSet.as_view({'get': 'list', 'post': 'create', }), name='dispense_categorie'),
-    path('dispense/categorie/<int:id_dispensa>/<int:id_categoria>', vw.CategorieViewSetId.as_view({'get': 'list', 'put': 'update', 'delete' : 'destroy'}), name='dispense_categorie'),
+    path('dispense/<int:id_dispensa>/categorie/', vw.CategorieViewSet.as_view({'get': 'list', 'post': 'create', }), name='dispense_categorie'),
+    path('dispense/<int:id_dispensa>/categorie/<int:id_categoria>/', vw.CategorieViewSetId.as_view({'get': 'list', 'put': 'update', 'delete' : 'destroy'}), name='dispense_categorie_id'),
 
+    #path per l'API /dispense/prodotti/
+    path('dispense/<int:id_dispensa>/prodotti/', vw.ProdottiViewSet.as_view({'get': 'list', 'post': 'create', }), name='dispense_prodotti'),
+    path('dispense/<int:id_dispensa>/prodotti/<int:id_prodotto>/', vw.ProdottiViewSetId.as_view({'get': 'list', 'put': 'update', 'delete' : 'destroy'}), name='dispense_prodotti_id'),
+    path('dispense/<int:id_dispensa>/prodotti/<str:nome_prodotto>/', vw.ProdottiListName.as_view(), name='dispense_prodotti_name'),
+
+    #path per l'API /dispense/elementi/
+    #?data: YYYY-MM-DD 
+    #?data2: YYYY-MM-DD (utilizzata per la ricerca di elementi compresi tra due date)
+    path('dispense/<int:id_dispensa>/prodotti/<int:id_prodotto>/elementi/', vw.ElementiViewSet.as_view({'get': 'list', 'post': 'create', }), name='dispense_elementi'),
+    path('dispense/<int:id_dispensa>/prodotti/<int:id_prodotto>/elementi/<int:id_elemento>/', vw.ElementiViewSetId.as_view({'get': 'list', 'put': 'update', 'delete' : 'destroy'}), name='dispense_elementi_id'),
+
+
+    #Mail Deamon
+    path('dispense/deamon/', vw.MailDeamon.as_view({'get' : 'list'}), name="dispense_mail_deamon"),
 ]

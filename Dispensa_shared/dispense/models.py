@@ -75,9 +75,9 @@ class Categorie(models.Model):
 class Prodotti(models.Model):
 
     #PK
-    id_dispensa = models.ForeignKey(Dispensa, on_delete=models.CASCADE, related_name='id_dispensa_prodotto')
     id_prodotto = models.IntegerField(primary_key=True, unique=True)
-
+    id_dispensa = models.ForeignKey(Dispensa, on_delete=models.CASCADE, related_name='id_dispensa_prodotto')
+    
     id_categoria = models.ForeignKey(Categorie, on_delete=models.CASCADE, related_name='id_categoria_prodotto', blank=True, null=True)
 
     nome_prodotto = models.CharField(max_length=50, blank=False, null=False)
@@ -109,7 +109,7 @@ class Elementi(models.Model):
     id_elemento = models.AutoField(primary_key=True, unique=True)
 
     data_scadenza = models.DateField(blank=False, null=False)
-    prodotto = models.ForeignKey(Prodotti, on_delete=models.CASCADE, related_name='prodotto_elemento')
+    id_prodotto = models.ForeignKey(Prodotti, on_delete=models.CASCADE, related_name='prodotto_elemento')
 
     data_ora_creazione = models.DateTimeField(auto_now_add=True)
     data_ora_modifica = models.DateTimeField(auto_now=True)
@@ -120,6 +120,6 @@ class Elementi(models.Model):
         verbose_name_plural = "Elementi"
 
     def __str__(self):
-        return "id: {} prd: {} scad: {}".format(self.id_elemento, self.prodotto.nome_prodotto, self.data_scadenza)
+        return "id: {} prd: {} scad: {}".format(self.id_elemento, self.id_prodotto.nome_prodotto, self.data_scadenza)
 
 #multi primary key https://stackoverflow.com/questions/16800375/how-can-i-set-two-primary-key-fields-for-my-models-in-django
