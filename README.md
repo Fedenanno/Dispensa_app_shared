@@ -14,3 +14,17 @@ Django;
 python -m venv venv
 .\venv\Scripts\activate
 pip install -r requirements.txt
+
+
+
+intall vue
+npm create vite@latest
+
+run
+npm install
+npm run dev
+
+for  tailwind
+comandi della doc. ufficiale
+for tailwind template
+npm install @headlessui/vue @heroicons/vue

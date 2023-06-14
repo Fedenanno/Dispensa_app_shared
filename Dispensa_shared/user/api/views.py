@@ -20,10 +20,14 @@ class RegisterAPIView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return Response({
+        
+        res = Response({
             "user": CustomUserSerializer(user, context=self.get_serializer_context()).data,
             "token": AuthToken.objects.create(user)[1]
         })
+        #crss gestito a livello globale
+        # res['Access-Control-Allow-Origin'] = request.META.get('Origin')
+        return res
 
 
 class LoginAPIView(generics.GenericAPIView):

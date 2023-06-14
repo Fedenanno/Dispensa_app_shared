@@ -377,7 +377,9 @@ class ProdottiViewSetId(viewsets.ModelViewSet):
     lookup_field = 'id_dispensa'
 
     def get_queryset(self):
-        return Prodotti.objects.filter(id_dispensa=self.kwargs['id_dispensa'], id_prodotto=self.kwargs['id_prodotto'])
+        #return Prodotti.objects.filter(id_dispensa=self.kwargs['id_dispensa'], id_prodotto=self.kwargs['id_prodotto'])
+        #in questo modo se non trova il prodotto restituisce 404
+        return get_object_or_404(Prodotti, id_dispensa=self.kwargs['id_dispensa'], id_prodotto=self.kwargs['id_prodotto'])
     
     def perform_update(self, serializer):
         if isAdmin(self):

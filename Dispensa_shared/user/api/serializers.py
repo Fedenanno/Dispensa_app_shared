@@ -7,7 +7,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         #fields = ['username']
-        fields = ('id', 'username', 'email')
+        fields = ('username', 'email')
 
 #usati da knox
 class RegisterSerializer(serializers.ModelSerializer):

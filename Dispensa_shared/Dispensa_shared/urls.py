@@ -47,17 +47,16 @@ urlpatterns = [
     #url to login via browser
     path('accounts/', include('django.contrib.auth.urls')),
 
-    #url to user api
-    path('api/', include('user.api.urls')),
-    
+    # #url to user api
+    # path('api/', include('user.api.urls')),
+    #url to login via API
+    path(r'api/auth/', include('user.api.urls')),
+
     #url to dispense api
     path('api/', include('dispense.api.urls')),
 
     #url to login via browser api
     path('api-auth/', include('rest_framework.urls')),
-
-    #url to login via API
-    path(r'api/auth/', include('user.api.urls')),
 
     re_path(r'^.*$', IndexTemplateView.as_view(), name='index'),
 ]
