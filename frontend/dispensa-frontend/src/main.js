@@ -10,12 +10,22 @@ import '@/common/axiosSetting'
 
 import { useAuthStore } from '@/stores/auth'
 
+import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 
+//vue config
 const app = createApp(App)
 
-app.use(createPinia())
-const authStore = await useAuthStore();
+//store per autenticazione
+const pinia = createPinia()
+app.use(pinia)
+const store = useAuthStore()
+
 
 app.use(router)
+
+
+
+//css config
+app.use(VueTailwindDatepicker)
 
 app.mount('#app')

@@ -10,18 +10,21 @@
     <!-- Pulsanti -->
     <ul id="drawer" role="menu"
       class="sm:gap-3 transition-left ease-[cubic-bezier(0.4, 0.0, 0.2, 1)] delay-150  sm:flex  flex flex-col cursor-pointer absolute min-h-screen -left-48 sm:static w-48 top-0 bg-white sm:shadow-none shadow-xl sm:bg-transparent sm:flex-row sm:w-auto sm:min-h-0 dark:bg-slate-900  ">
+
       <li
         class="font-medium text-sm p-3 hover:bg-slate-300 dark:hover:bg-slate-800 sm:p-0 sm:hover:bg-transparent text-primary">
-        <a href="#" class="dark:text-white">Men</a>
+        <router-link :to="{ name: 'home'}">
+          <a href="#" class="dark:text-white">Home</a>
+        </router-link>
       </li>
-      <li
+      <!-- <li
         class="font-medium text-sm p-3 cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-800 sm:p-0 sm:hover:bg-transparent text-gray-600 hover:text-primary transition-colors">
         <a href="#" class="dark:text-white">Women</a>
       </li>
       <li
         class="font-medium text-sm p-3 cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-800 sm:p-0 sm:hover:bg-transparent text-gray-600 hover:text-primary transition-colors">
         <a href="#" class="dark:text-white">Kids</a>
-      </li>
+      </li> -->
     </ul>
 
     <div class="flex gap-3 items-center">
@@ -80,7 +83,7 @@
 
       <!-- in caso di utente non loggato, mostro il pulsante login -->
       <div v-show="!authStore.isAuthenticated">
-        <button @click="this.$router.push({ name: 'login' }) "
+        <button @click="this.$router.push({ name: 'login' })"
           class="block text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-blue-800">Login</button>
       </div>
 

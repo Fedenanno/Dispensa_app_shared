@@ -1,7 +1,10 @@
 <template>
+    
     <div class="min-h-screen bg-gray-100 flex flex-col sm:py-12">
         <div class="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-            <h1 class="text-2xl font-bold mb-6 text-center">Registration Form</h1>
+            <h1 class="text-2xl font-bold mb-6 text-center">Registrati</h1>
+            <br>
+            <h3 class=" mb-6 text-center">TODO implementare controlli su password, lunghezza, caratteri speciali etc.</h3>
             <form @submit.prevent="register" class="w-full max-w-sm mx-auto bg-white p-8 rounded-md shadow-md">
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
@@ -37,7 +40,17 @@
                             d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                 </button>
+
+                <div class="flex items-start mt-5">
+
+                    <label for="terms" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Hai già un account?
+                        <router-link :to="{ name: 'login' }"><a href="#"
+                                class="text-blue-600 hover:underline dark:text-blue-500">Login!</a>
+                        </router-link>
+                    </label>
+                </div>
             </form>
+
         </div>
     </div>
 </template>

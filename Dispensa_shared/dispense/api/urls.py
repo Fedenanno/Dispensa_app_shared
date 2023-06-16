@@ -25,6 +25,8 @@ urlpatterns = [
     path('dispense/<int:id_dispensa>/prodotti/<str:nome_prodotto>/', vw.ProdottiListName.as_view(), name='dispense_prodotti_name'),
 
     #path per l'API /dispense/elementi/
+    #API che fornisce gli elementi in scadenza in un data specifica per una dispensa
+    path('dispense/<int:id_dispensa>/prodotti/elementi/<data_scadenza>/', vw.ElementiListDate.as_view(), name='dispense_elementi'),
     #?data: YYYY-MM-DD 
     #?data2: YYYY-MM-DD (utilizzata per la ricerca di elementi compresi tra due date)
     path('dispense/<int:id_dispensa>/prodotti/<int:id_prodotto>/elementi/', vw.ElementiViewSet.as_view({'get': 'list', 'post': 'create', }), name='dispense_elementi'),

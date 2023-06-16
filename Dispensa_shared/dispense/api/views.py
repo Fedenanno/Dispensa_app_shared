@@ -379,8 +379,15 @@ class ProdottiViewSetId(viewsets.ModelViewSet):
     def get_queryset(self):
         #return Prodotti.objects.filter(id_dispensa=self.kwargs['id_dispensa'], id_prodotto=self.kwargs['id_prodotto'])
         #in questo modo se non trova il prodotto restituisce 404
-        return get_object_or_404(Prodotti, id_dispensa=self.kwargs['id_dispensa'], id_prodotto=self.kwargs['id_prodotto'])
-    
+        #return get_object_or_404(Prodotti, id_dispensa=self.kwargs['id_dispensa'], id_prodotto=self.kwargs['id_prodotto'])
+        prd = Prodotti.objects.filter(id_dispensa=self.kwargs['id_dispensa'], id_prodotto=self.kwargs['id_prodotto'])
+        if prd.exists():
+            return prd
+        else:
+            raise exc.ProdottoNotFound()
+
+        
+
     def perform_update(self, serializer):
         if isAdmin(self):
             if not sameDispensa(self) or not checkCategoria(self):
@@ -438,16 +445,16 @@ class ElementiViewSet(viewsets.ModelViewSet):
     
 class ElementiViewSetId(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, DispensaIsShared, ProdottoIsInDispensa]
-    serializer_class = srz.ElementiSerializer
+    serializer_class = srz.ElementiSerializerEdit
     pagination_class = None
-    lookup_field = 'id_dispensa'
+    lookup_field = 'id_prodotto'
 
     def get_queryset(self):
-        return Elementi.objects.filter(id_dispensa=self.kwargs['id_dispensa'], id_prodotto=self.kwargs['id_prodotto'], id_elemento=self.kwargs['id_elemento'])
+        return Elementi.objects.filter(id_prodotto=self.kwargs['id_prodotto'], id_elemento=self.kwargs['id_elemento'])
     
     def perform_update(self, serializer):
         if isAdmin(self):
-            serializer.save(id_dispensa=Dispensa.objects.get(id_dispensa=self.kwargs['id_dispensa']), id_prodotto=Prodotti.objects.get(id_prodotto=self.kwargs['id_prodotto']))
+            serializer.save(id_prodotto=Prodotti.objects.get(id_prodotto=self.kwargs['id_prodotto']))
             return Response("Elemento modificato con successo", status.HTTP_200_OK)
         raise exc.UserIsNotAdmin()
     
@@ -457,6 +464,22 @@ class ElementiViewSetId(viewsets.ModelViewSet):
             return Response("Elemento eliminato con successo", status.HTTP_200_OK)
         raise exc.UserIsNotAdmin()
     
+#view che restituisce tutti gli elementi che hanno una data di scadenza uguale a quella fornita nel query params data_scadenza.
+#Cerca solo tra gli elementi sono figli di prodotti che fanno parte della dispensa specificata da id_dispensa, Elementi non ha il campo id_dispensa, lo ha il prodotto padre
+
+class ElementiListDate(generics.ListAPIView):
+    permission_classes = [IsAuthenticated, DispensaIsSharedOrOwner]
+    serializer_class = srz.ElementiSerializerConProdotto
+    pagination_class = None
+    lookup_field = 'id_dispensa'
+
+    def get_queryset(self):
+        return Elementi.objects.filter(id_prodotto__in=Prodotti.objects.filter(id_dispensa=self.kwargs['id_dispensa']), data_scadenza=self.kwargs['data_scadenza']).order_by('data_scadenza')
+    
+
+        
+
+
 
 #view che fa partire la funzione checkDispense
 class MailDeamon(viewsets.ModelViewSet):

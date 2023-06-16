@@ -46,6 +46,7 @@ export const useAuthStore = defineStore('auth', {
             }
         },
         async login(username, password) {
+            
             try {
                 const response = await axios.post('auth/login', {
                     username,
@@ -54,10 +55,10 @@ export const useAuthStore = defineStore('auth', {
                 this.authUser = response.data.user
                 localStorage.setItem('user', JSON.stringify(response.data))
                 setHeader(response.data.token)
-                return response
+                return true
             }
             catch (error) {
-                throw error
+                return false
             }
         },
         async register(username, email, password) {
@@ -71,7 +72,8 @@ export const useAuthStore = defineStore('auth', {
                 return response
             }
             catch (error) {
-                throw error
+                if(error.response)
+                    console.log("errore in reg: "+ error.response)
             }
         },
         async logout() {

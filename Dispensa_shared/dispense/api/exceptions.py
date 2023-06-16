@@ -67,3 +67,10 @@ class CategoriaAlreadyExists(APIException):
     status_code = 400
     default_detail = 'categoria già esistente'
     default_code = 'categoria_already_exists'
+
+
+#---- PRODOTTI ----
+class ProdottoNotFound(APIException):
+    status_code = 404
+    default_detail = 'prodotto non trovato'
+    default_code = 'prodotto_not_found'

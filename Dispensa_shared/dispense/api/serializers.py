@@ -50,6 +50,17 @@ class ProdottiSerializer(serializers.ModelSerializer):
         
     def get_inserito_da(self, obj):
         return obj.inserito_da.username
+    
+class ProdottiSerializerSemplice(serializers.ModelSerializer):
+
+    inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)
+        
+    class Meta:
+        model = Prodotti
+        fields = ['id_prodotto', 'nome_prodotto', 'descrizione_prodotto', 'inserito_da']
+        
+    def get_inserito_da(self, obj):
+        return obj.inserito_da.username
         
 #-------- Elementi --------
 class ElementiSerializer(serializers.ModelSerializer):
@@ -62,3 +73,28 @@ class ElementiSerializer(serializers.ModelSerializer):
                 
     def get_inserito_da(self, obj):
         return obj.inserito_da.username 
+
+class ElementiSerializerEdit(serializers.ModelSerializer):
+                    
+    inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)            
+                    
+    class Meta:
+        model = Elementi
+        fields = ['data_scadenza', 'inserito_da']
+                
+    def get_inserito_da(self, obj):
+        return obj.inserito_da.username 
+        
+class ElementiSerializerConProdotto(serializers.ModelSerializer):
+
+    inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)
+    id_prodotto = ProdottiSerializerSemplice(read_only=True)
+
+    class Meta:
+        model = Elementi
+        fields = '__all__'
+
+    def get_inserito_da(self, obj):
+        return obj.inserito_da.username
+    
+

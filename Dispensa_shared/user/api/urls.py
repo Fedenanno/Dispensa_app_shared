@@ -8,7 +8,7 @@ urlpatterns = [
     path('user/', CustomUserAPIView.as_view(), name='current-user'),
 
     #usati da knox
-    #path('', include('knox.urls')),
+    path('', include('knox.urls')),
     path(r'register', RegisterAPIView.as_view()),
     path(r'login', LoginAPIView.as_view()),
     path(r'logout', LogoutView.as_view(), name='knox_logout'),

@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
+//store di autenticazione
+import { useAuthStore } from '@/stores/auth'
+
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory('/'), //import.meta.env.BASE_URL
   routes: [
     {
       path: '/',
@@ -42,8 +45,24 @@ const router = createRouter({
       path: '/prova/:id',
       name: 'prova',
       component: () => import('../views/prova.vue'),
+      props: true
+    },
+    {
+      path: '/provaPulsante',
+      name: 'provaPulsante',
+      component: () => import('../views/provaView.vue'),
     }
   ]
+})
+
+//routerguard per preventivo accesso a pagine non autorizzate
+router.beforeEach(async (to, from) => {
+  const store = await useAuthStore()
+  //se non è autenticato e non sta andando alla pagina di login, lo rimando io alla pagina di login
+  if (!store.isAuthenticated && to.name !== 'login' && to.name !== 'register' && to.name !== 'home') {
+    // redirect the user to the login page
+    return { name: 'login' }
+  }
 })
 
 export default router

@@ -1,0 +1,6 @@
+https://tailwindcomponents.com/search?query=Checks
+https://tailwindcss.com/docs/responsive-design
+https://flowbite.com/docs/components/buttons/
+https://flowbite.com/blocks/
+https://www.iconfinder.com/icons/211686/back_arrow_icon
+https://vue-tailwind-datepicker.com/props.html
