@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 
+#TODO !Important, toliere l'id come visibile e sostituirlo con un UUID casuale. In questo modo non si  
+# espongono le informazioni sensibili
 
 #Modelli per la web-app dispensa shared
 class Dispensa(models.Model):

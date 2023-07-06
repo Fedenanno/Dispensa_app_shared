@@ -225,8 +225,8 @@
         </form>
 
         <!-- prodotti -->
-        <div v-for="prd in prodotti">
-            <ProdottoComp :id_dispensa="prd.id_dispensa" :id_prodotto="prd.id_prodotto" />
+        <div v-for="prd in prodotti_ricerca">
+                <ProdottoComp :id_dispensa="prd.id_dispensa" :id_prodotto="prd.id_prodotto" />
         </div>
     </div>
 </template>
@@ -239,7 +239,9 @@ import ProdottoComp from '@/components/ProdottoComp.vue'
 import ElementoComp from '@/components/ElementoComp.vue'
 //css
 import { Modal } from 'flowbite'
-import { ref } from 'vue';
+import { getTransitionRawChildren, ref } from 'vue';
+
+//TODO !IMPORTANTE migliorare la struttura del codice, che è stato scritto troppo di fretta.
 
 
 export default {
@@ -267,6 +269,7 @@ export default {
             prodotti_data: [],
             visualizza: 'elementi', //serve per visualizzare il menu corretto
             ricerca: '', //valore del campo ricerca
+            prodotti_ricerca: [], //prodotti filtrati dalla ricerca
             //aggiunta prodotti elementi
             nuovo_prd_el: false,
             prodotto_esistente: true, //indica se il prodotto esiste gia nella dispensa (viene modificato da una GET)
@@ -293,10 +296,7 @@ export default {
             //data di oggi nel formato dd-mm-yyyy in un unica riga
             return new Date().toLocaleDateString().replaceAll("/", "-")//.split("/").reverse().join("-")
         },
-        cercaProdotto(string) {
-            //prende tutti gli elementi in prodotti in cui string è una sottostringa del nome_prodotto e crea un nuovo Array
-            this.prodotti = this.prodotti.filter(el => el.nome_prodotto.includes(string))
-        },
+        //TODO non funziona
         async aggiuntiProdottoElemento() {
             //controllo se esiste l'elemento con una get
             if (this.prodotto_esistente)
@@ -336,10 +336,6 @@ export default {
                 } catch (e) { console.log("errore aggiunta elemento: " + e) }
             }
         },
-        forceRerender() {
-            this.componentKey += 1;
-        },
-
         async nuovoProdotto() {
             //aggiunge un nuovo prodotto
             try {
@@ -349,7 +345,23 @@ export default {
                 console.log("Aggiunta prodotto: ")
                 '404'
             }
-        }
+        },
+        ricerca_prodotti(id){
+            
+            //ricerca per id
+            if (/^\d+$/.test(id))
+                this.prodotti_ricerca = this.prodotti.filter(prd => prd.codice_prodotto.incudes(id))
+            //ricerca per nome
+            else
+                this.prodotti_ricerca = this.prodotti.filter(prd => prd.nome_prodotto.incudes(id))
+                
+
+
+            
+        },
+        forceRerender() {
+            this.componentKey += 1;
+        },
     },
     beforeMount() {
         this.getProdotti()
@@ -369,11 +381,14 @@ export default {
                 this.elementi_data = false
         },
         ricerca: function (val, newVal) {
-            if (newVal.length == '')
-                this.getProdotti()
-            else
-                this.cercaProdotto(newVal)
-        },
+            if(val != "")
+                this.ricerca_prodotti(val);
+            else{
+                this.getProdotti();
+                this.prodotti_ricerca = this.prodotti;
+            }
+        }
+        
 
     }
 }
