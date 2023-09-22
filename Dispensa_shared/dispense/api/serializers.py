@@ -6,13 +6,23 @@ from user.api.serializers import CustomUserSerializer
 class DispensaSerializer(serializers.ModelSerializer):
 
     inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)
+    #In questo modo gli utenti non possono essere modificati
+    user = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='username'
+     )
 
     class Meta:
         model = Dispensa
         fields = '__all__'
+        read_only_fields = ['user']
 
     def get_inserito_da(self, obj):
         return obj.inserito_da.username
+    
+    def get_user(self, obj):
+        return obj.user.username
 
 class DispensaUserSerializer(serializers.ModelSerializer):
 

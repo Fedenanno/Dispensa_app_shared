@@ -2,7 +2,9 @@
     <div class="flex flex-col min-h-screen">
         <navbar />
 
-        <RouterView />
+        <div class="p-4 container mx-auto">
+            <RouterView />
+        </div>
 
         <footer class="bg-white dark:bg-gray-900 mt-auto">
 
@@ -128,18 +130,19 @@ export default {
 </script>
 
 <style>
-html, body {
-  height: 100%;
+html,
+body {
+    height: 100%;
 }
 
 /* Aggiungiamo queste classi per creare un layout a due colonne */
 .flex-col {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .mt-auto {
-  margin-top: auto;
+    margin-top: auto;
 }
 </style>
 

@@ -15,9 +15,27 @@
         </router-link>
     </div>
 
+    <div class="flex flex-col items-center justify-center">
+        <div class="">
+            <h2 class="py-4 text-4xl font-extrabold dark:text-white">
+                Dispensa:
+                <span class="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600">
+                    {{$route.query.nome_dispensa }}
+                </span>
+            </h2>
+
+        </div>
+        <div v-if="$route.query.nome_dispensa == ''" class="max-w-sm animate-pulse">
+            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+        </div>
+    </div>
+
+
+
+
     <!-- pulsantiera cambia visualizzazione -->
-    <div class="flex items-center justify-center pb-10">
-        <div class="inline-flex rounded-md shadow-sm" role="group">
+    <div class="flex flex-row justify-center py-4">
+        <div class="inline-flex items-center rounded-md basis-5/6" role="group">
             <div class="inline-flex rounded-md shadow-sm" role="group">
                 <button @click="this.visualizza = 'elementi'" type="button"
                     class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
@@ -51,18 +69,31 @@
                 </button>
             </div>
         </div>
+        <div class="inline-flex rounded-md  basis-1/6" role="group">
+            <button @click="this.modal_impostazioni.show()" type="button"
+                class="inline-flex items-left px-4 py-2 text-sm font-medium text-gray-900 bg-white border rounded-md border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+                <svg aria-hidden="true" class="w-4 h-4 mr-2 fill-current" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z">
+                    </path>
+                </svg>
+                Impostazioni
+            </button>
+        </div>
     </div>
 
     <!-- Prodotti in scadenza -->
     <div v-if="this.visualizza == 'elementi'" class="md:container md:mx-auto pb-10">
 
         <!-- Prodotti in scadenza oggi -->
-        <h2 class="text-4xl font-extrabold dark:text-white">Prodotti in scadenza
+        <h2 class="py-4 text-4xl font-extrabold dark:text-white">Prodotti in scadenza
             <span class="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600">oggi.
             </span>
         </h2>
         <!-- elementi -->
-        <ElementoComp :id_dispensa="this.id" :data_ricerca="data_oggi()" :key="this.componentKey" />
+        TODO non funziona la modifica della data se si cercano gli elementi per data
+        <ElementoComp :id_dispensa="this.id" :data_ricerca="data_oggi()"/>
 
 
         <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700 ">
@@ -93,7 +124,7 @@
         </div> -->
     </div>
 
-    <!-- Aggiungi nuovo prodotto / elemento -->
+    <!-- Modal Aggiungi nuovo prodotto / elemento -->
     <div id="modal_aggiunta" tabindex="-1" aria-hidden="true"
         class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative w-full max-w-md max-h-full">
@@ -113,7 +144,8 @@
 
                 <div class="px-6 py-6 lg:px-8">
                     <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Aggiungi un nuovo Prodotto / Elemento
-                        TODO sistemare il fatto che non si puo creare un prodotto e aggiungere subito un elemento, non fa in tempo o cmq ce un errore
+                        TODO sistemare il fatto che non si puo creare un prodotto e aggiungere subito un elemento, non fa in
+                        tempo o cmq ce un errore
                     </h3>
 
                     <form class="space-y-4" @submit.prevent="this.aggiuntiProdottoElemento">
@@ -203,6 +235,49 @@
         </div>
     </div>
 
+    <!-- Modal Impostazioni -->
+    <div id="modal_impostazioni" tabindex="-1" aria-hidden="true"
+        class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative w-full max-w-md max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <button @click="this.modal_aggiunta.hide()" type="button"
+                    class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
+                    data-modal-hide="">
+                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+
+                <div class="px-6 py-6 lg:px-8">
+                    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Impostazioni
+                    </h3>
+
+                    <form class="space-y-4" @submit.prevent="">
+
+                        <div class="relative">
+                            <input v-model="this.nomeDispensa" type="search" id="default-search"
+                                class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Cambia nome dispensa..." required>
+                            <button @click="this.cambiaNomeDispensa()" type="submit"
+                                class="text-white absolute right-2.5 bottom-2.5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Cambia</button>
+                        </div>
+
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700 " />
+
+                        <!-- Aggiunta elemento -->
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- cerca / mostra lista prodotti -->
     <div v-if="this.visualizza == 'prodotti'" class="md:container md:mx-auto pb-10">
         <form @submit.prevent="">
@@ -218,15 +293,15 @@
                 </div>
                 <input v-model="this.ricerca" type="search" id="default-search"
                     class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Search Mockups, Logos..." required>
-                <button type="submit"
-                    class="text-white absolute right-2.5 bottom-2.5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
+                    placeholder="Cerca prodotti..." required>
+                <!-- <button type="submit"
+                    class="text-white absolute right-2.5 bottom-2.5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button> -->
             </div>
         </form>
 
         <!-- prodotti -->
-        <div v-for="prd in prodotti_ricerca">
-                <ProdottoComp :id_dispensa="prd.id_dispensa" :id_prodotto="prd.id_prodotto" />
+        <div v-for="prd in this.prodotti_ricerca">
+            <ProdottoComp :id_dispensa="prd.id_dispensa" :id_prodotto="prd.id_prodotto" />
         </div>
     </div>
 </template>
@@ -234,6 +309,7 @@
 
 <script>
 import { axios } from '@/common/axiosSetting'
+import { getTitle } from '@/common/htmlUtils.js'
 //components
 import ProdottoComp from '@/components/ProdottoComp.vue'
 import ElementoComp from '@/components/ElementoComp.vue'
@@ -253,7 +329,7 @@ export default {
         id: { //id della dispensa
             type: String,
             required: true
-        },
+        }
     },
     components: {
         ProdottoComp,
@@ -265,7 +341,6 @@ export default {
             dateValue: new Date(), //data scelta per la ricerca degli elementi
             elementi_data: false, //indica se è stata inserita una data per la ricerca degli elementi
             //per prodotti
-            prodotti: [], //prodotti nella dispensa
             prodotti_data: [],
             visualizza: 'elementi', //serve per visualizzare il menu corretto
             ricerca: '', //valore del campo ricerca
@@ -280,14 +355,28 @@ export default {
             data_nuovo_elemento: new Date(), //data del nuovo elemento da aggiungere
             //aggiorna compo
             componentKey: ref(0),
+            //impostazioni
+            modal_impostazioni: null, //oggetto modal per le impostazioni
+            nomeDispensa: this.$route.query.nome_dispensa,
+            utenti_condivisione : [],
+
         }
     },
     methods: {
         async getProdotti() {
             try {
                 const response = await axios.get('dispense/' + this.id + '/prodotti/')
-                this.prodotti = response.data
+                this.prodotti_ricerca = response.data
             } catch (e) {
+                console.log(e)
+            }
+        },
+        async getProdottiRicerca(id_nome) {
+            try {
+                const response = await axios.get('dispense/' + this.id + '/prodotti/' + id_nome + '/')
+                this.prodotti_ricerca = response.data
+            }
+            catch (e) {
                 console.log(e)
             }
         },
@@ -346,31 +435,47 @@ export default {
                 '404'
             }
         },
-        ricerca_prodotti(id){
-            
-            //ricerca per id
-            if (/^\d+$/.test(id))
-                this.prodotti_ricerca = this.prodotti.filter(prd => prd.codice_prodotto.incudes(id))
-            //ricerca per nome
-            else
-                this.prodotti_ricerca = this.prodotti.filter(prd => prd.nome_prodotto.incudes(id))
-                
-
-
-            
-        },
         forceRerender() {
             this.componentKey += 1;
         },
+        async cambiaNomeDispensa() {
+            try {
+                const response = await axios.put('dispense/' + this.id + '/', {
+                    nome_dispensa: this.nomeDispensa
+                })
+                this.$route.query.nome_dispensa = this.nomeDispensa
+                this.modal_impostazioni.hide()
+            }
+            catch (e) {
+                console.log(e)
+            }
+        },
+        async getUtentiCondivisione(){
+            try {
+                const response = await axios.get('dispense/' + this.id + '/prodotti/')
+                this.utenti_condivisione = response.data
+
+            } catch (e) {
+                console.log(e)
+            }
+        }
     },
     beforeMount() {
         this.getProdotti()
+        document.title = this.nomeDispensa
     },
     mounted() {
         // modal aggiunta prodotti / elementi
         const $modalElementInfo = document.querySelector('#modal_aggiunta');
         const modalOptions = { backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40' }
         this.modal_aggiunta = new Modal($modalElementInfo, modalOptions);
+
+        // modal impostazioni
+        const $modalElementInfo2 = document.querySelector('#modal_impostazioni');
+        const modalOptions2 = { backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40' }
+        this.modal_impostazioni = new Modal($modalElementInfo2, modalOptions2);
+
+
     },
     watch: {
         dateValue: function (val, newVal) {
@@ -381,14 +486,14 @@ export default {
                 this.elementi_data = false
         },
         ricerca: function (val, newVal) {
-            if(val != "")
-                this.ricerca_prodotti(val);
-            else{
-                this.getProdotti();
-                this.prodotti_ricerca = this.prodotti;
+
+            if (val != "")
+                this.getProdottiRicerca(val)
+            else {
+                this.getProdotti()
             }
         }
-        
+
 
     }
 }

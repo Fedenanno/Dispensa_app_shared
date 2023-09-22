@@ -131,6 +131,7 @@ import { axios } from '@/common/axiosSetting'
 
 //component
 import ElementoComp from '@/components/ElementoComp.vue'
+import { onUpdated } from 'vue'
 
 export default {
     name: 'ProdottoComp',
@@ -182,7 +183,10 @@ export default {
         //     }
         // },
     },
-    created() {
+    beforeMount() {
+        this.getProdotto()
+    },
+    updated() {
         this.getProdotto()
     }
 }

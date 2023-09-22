@@ -52,6 +52,7 @@ class DispensaViewSetId(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, DispensaIsOwner]
     serializer_class = srz.DispensaSerializer
     pagination_class = None
+    lookup_field = 'id_dispensa'
 
     def get_queryset(self):
         return Dispensa.objects.filter(id_dispensa=self.kwargs['id_dispensa'])

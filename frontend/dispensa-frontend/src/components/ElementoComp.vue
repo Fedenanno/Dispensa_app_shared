@@ -47,7 +47,7 @@
                     </h5>
                     <span class="text-sm text-gray-500 dark:text-gray-400">{{ el.data_scadenza }}</span>
                     <!-- data -->
-                    <div v-show="edit_data[index]" class="relatieve mt-3">
+                    <div v-show="edit_data[index]" class="relatieve p-2 mt-3">
                         <vue-tailwind-datepicker class="absolute inset-y-0 right-0 w-16" as-single placeholder="Scegli data"
                             :formatter="{ date: 'DD-MM-YYYY', month: 'MMM' }" v-model="date_value" />
                     </div>
@@ -55,7 +55,7 @@
                     <div class="flex mt-2 space-x-3 relative md:mt-6">
                         <!-- conferma modifica -->
                         <div v-if="edit_data[index]">
-                            <a @click="this.editElemento(el.id_prodotto.id_prodotto, el.id_elemento, index)" href="#"
+                            <a @click="this.editElemento(el.id_prodotto, el.id_elemento, index)" href="#"
                                 class="mr-2 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-green-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">Conferma</a>
                             <a @click="edit_data[index] = false" href="#"
                                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-orange-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">Annulla</a>
@@ -63,7 +63,7 @@
                         <div v-else>
                             <a @click="edit_data[index] = true" href="#"
                                 class="mr-2 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-orange-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">Modifica</a>
-                            <a @click="this.deleteElemento(el.id_prodotto.id_prodotto, el.id_elemento)" href="#"
+                            <a @click="this.deleteElemento(el.id_prodotto, el.id_elemento)" href="#"
                                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-red-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">Elimina</a>
                         </div>
                     </div>
@@ -127,8 +127,6 @@ export default {
                         // inizializza l'array edit_data con tutti valori false per quanti elementi sono presenti in elementi
                         this.edit_data = new Array(response.data.length).fill(false);
                         this.elementi = response.data;
-
-
                     })
                     .catch(error => {
                         console.log(error);
@@ -153,6 +151,7 @@ export default {
         },
         //Modifica un elemento di un prodotto
         editElemento(id_prodotto, id_elemento) {
+            
             const url = '/dispense/' + this.id_dispensa + '/prodotti/' + id_prodotto + '/elementi/' + id_elemento + '/'
             axios.put(url, {
                 data_scadenza: this.date_value['undefined'].split("-").reverse().join("-"),
@@ -179,6 +178,7 @@ export default {
     },
     mounted() {
         this.getElementi();
+        console.log("elementi: "+this.elementi)
 
     }
 }

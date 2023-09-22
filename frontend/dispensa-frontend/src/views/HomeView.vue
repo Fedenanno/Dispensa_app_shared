@@ -1,5 +1,5 @@
 <template>
-  <div class="md:container md:mx-auto">
+  <div class="">
 
     <!-- In caso di login -->
     <!-- v-if="this.authStore.isAuthenticated()" -->
@@ -9,7 +9,10 @@
         <!-- dispense dell'utente -->
         <div v-for="dispensa in this.dispense">
           <!-- <router-link :to="{ name: 'dispenseHome', params: { id : dispensa.id_dispensa}}"> -->
-          <div @click="apriDispensa(dispensa.id_dispensa)"
+          <div @click="this.$router.push({ name: 'dispenseHome', params: 
+                                                                { id: dispensa.id_dispensa},
+                                                                  query: 
+                                                                { nome_dispensa: dispensa.nome_dispensa } })"
             class="bg-white dark:bg-slate-800 rounded-lg hover:bg-indigo-100 px-6 py-8 ring-1 ring-slate-900/5 shadow-xl">
 
             <div>
