@@ -57,7 +57,10 @@
                     </svg>
                     Aggiungi
                 </button>
-                <button @click="this.visualizza = 'prodotti'" type="button"
+                <button @click="
+                            this.visualizza = 'prodotti';
+                            this.getProdotti()"
+                            type="button"
                     class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
                     <svg aria-hidden="true" class="w-4 h-4 mr-2 fill-current" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
@@ -92,7 +95,7 @@
             </span>
         </h2>
         <!-- elementi -->
-        TODO non funziona la modifica della data se si cercano gli elementi per data
+        <!-- TODO: non funziona la modifica della data se si cercano gli elementi per data -->
         <ElementoComp :id_dispensa="this.id" :data_ricerca="data_oggi()"/>
 
 
@@ -143,9 +146,8 @@
                 </button>
 
                 <div class="px-6 py-6 lg:px-8">
-                    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Aggiungi un nuovo Prodotto / Elemento
-                        TODO sistemare il fatto che non si puo creare un prodotto e aggiungere subito un elemento, non fa in
-                        tempo o cmq ce un errore
+                    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+                        Aggiungi un nuovo Prodotto / Elemento
                     </h3>
 
                     <form class="space-y-4" @submit.prevent="this.aggiuntiProdottoElemento">
@@ -241,7 +243,7 @@
         <div class="relative w-full max-w-md max-h-full">
             <!-- Modal content -->
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <button @click="this.modal_aggiunta.hide()" type="button"
+                <button @click="this.modal_impostazioni.hide()" type="button"
                     class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
                     data-modal-hide="">
                     <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
@@ -258,19 +260,30 @@
                     </h3>
 
                     <form class="space-y-4" @submit.prevent="">
-
+                        
+                        
+                        <h3 class="font-semibold text-gray-900 dark:text-white">Nome dispensa:</h3>
                         <div class="relative">
                             <input v-model="this.nomeDispensa" type="search" id="default-search"
                                 class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Cambia nome dispensa..." required>
                             <button @click="this.cambiaNomeDispensa()" type="submit"
-                                class="text-white absolute right-2.5 bottom-2.5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Cambia</button>
+                                class="text-white absolute right-2.5 bottom-2.5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                Cambia</button>
                         </div>
 
                         <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700 " />
 
                         <!-- Aggiunta elemento -->
-
+                        <h3 class="font-semibold text-gray-900 dark:text-white">Condividi:</h3>
+                        <div class="relative">
+                            <input v-model="this.usernameUtenteCondivisione" type="search" id="default-search"
+                                class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Inserisci username..." required>
+                            <button @click="" type="submit"
+                                class="text-white absolute right-2.5 bottom-2.5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                Condividi</button>
+                        </div>
 
                     </form>
                 </div>
@@ -300,7 +313,7 @@
         </form>
 
         <!-- prodotti -->
-        <div v-for="prd in this.prodotti_ricerca">
+        <div v-for="prd in this.prodotti_ricerca" >
             <ProdottoComp :id_dispensa="prd.id_dispensa" :id_prodotto="prd.id_prodotto" />
         </div>
     </div>
@@ -359,6 +372,7 @@ export default {
             modal_impostazioni: null, //oggetto modal per le impostazioni
             nomeDispensa: this.$route.query.nome_dispensa,
             utenti_condivisione : [],
+            usernameUtenteCondivisione: ''
 
         }
     },
@@ -388,7 +402,7 @@ export default {
         //TODO non funziona
         async aggiuntiProdottoElemento() {
             //controllo se esiste l'elemento con una get
-            if (this.prodotto_esistente)
+            if (this.prodotto_esistente){
                 try {
                     const url = 'dispense/' + this.id + '/prodotti/' + this.nuovo_prodotto.id_prodotto + "/"
                     console.log("url: " + url)
@@ -398,32 +412,37 @@ export default {
                     //     this.prodotto_esistente = false
                     //     return
                     // }
-                    console.log("prodotto esiste: " + response.status)
+                    console.log("il prodotto esiste: " + response.status)
                 } catch (e) {
                     this.prodotto_esistente = false
-                    console.log("prodotto non esiste")
+                    console.log("il prodotto non esiste")
                     return
                 }
-            //se non esiste apro il menu e lo faccio creare con una post
+            }
+            //se non esiste si apre il menu (cambiando il valore di prodotto_esistente a false) e lo faccio creare con una post
             else {
-                if (this.nuovoProdotto() < 300) {
+                const response = await this.nuovoProdotto()
+                if (response < 300) {
                     this.prodotto_esistente = true
                     console.log("prodotto aggiunto")
                 }
             }
 
-            //infine controllo se la data elemento != data di default, se si, aggiungo pure l'elemento
+            //infine controllo se la data elemento != data di default (quindi se è stata impostata), se si, aggiungo pure l'elemento
             if (this.data_nuovo_elemento.toString().split('').length < 16 && this.data_nuovo_elemento['undefined'].length != 0) {
                 try {
                     const response = await axios.post('dispense/' + this.id + '/prodotti/' + this.nuovo_prodotto.id_prodotto + "/elementi/", {
                         data_scadenza: this.data_nuovo_elemento['undefined'].split("-").reverse().join("-"),
                         id_prodotto: this.nuovo_prodotto.id_prodotto
                     })
+                    console.log("elemento aggiunto")
                     // ricarico il componente che visualizza gli elementi scaduti, dopo l'aggiunta di un nuovo elemento
                     this.forceRerender()
 
                 } catch (e) { console.log("errore aggiunta elemento: " + e) }
             }
+            else
+                console.log("elemento non aggiunto")
         },
         async nuovoProdotto() {
             //aggiunge un nuovo prodotto

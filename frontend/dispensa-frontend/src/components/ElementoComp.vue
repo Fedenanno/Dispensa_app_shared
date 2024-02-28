@@ -4,10 +4,10 @@
 
         <div v-for="(el, index) in elementi">
             <div
-                class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 ">
+                class="mb-3 w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 ">
                 <!-- dropdown -->
-                <div class="flex justify-end px-4 pt-4">
-                    <button id="dropdownButton" data-dropdown-toggle="dropdown"
+                <!-- <div class="flex justify-end px-4 pt-4">
+                    <button :id="'dropdownButton' + this.randomSlugDropdown" :data-dropdown-toggle="'dropdown_' + this.randomSlugDropdown"
                         class="inline-block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
                         type="button">
                         <span class="sr-only">Open dropdown</span>
@@ -18,34 +18,34 @@
                             </path>
                         </svg>
                     </button>
-                    <!-- Dropdown menu -->
-                    <div id="dropdown"
+                    Dropdown menu
+                    <div :id="'dropdown_' + this.randomSlugDropdown" 
                         class="z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                        <ul class="py-2" aria-labelledby="dropdownButton">
+                        <ul v-if="!edit_data[index]" class="py-2" :aria-labelledby="'dropdownButton' + this.randomSlugDropdown">
                             <li>
-                                <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Edit</a>
+                                <a @click="edit_data[index] = true"
+                                    href="#"
+                                    
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:text-orange-400 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                    Modifica</a>
                             </li>
                             <li>
-                                <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Export
-                                    Data</a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                                <a @click="this.deleteElemento(el.id_prodotto.id_prodotto, el.id_elemento)"
+                                    href="#"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                    Elimina</a>
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
                 <!-- info -->
-                <div class="flex flex-col items-center pb-10">
+                <div class="flex flex-col items-center pb-6 px-4 pt-4">
                     <!-- immagine -->
                     <img v-show="this.image" class="w-24 h-24 mb-3 rounded-full shadow-lg" src="#" alt="Bonnie image" />
                     <!-- info -->
-                    <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">{{ el.id_prodotto.nome_prodotto }}
-                    </h5>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ el.data_scadenza }}</span>
+                    <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">{{ el.id_prodotto.nome_prodotto }}</h5>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Codice: {{ el.id_prodotto.id_prodotto }}</span><br>
+                    <span class="text-sm text-gray-900 dark:text-gray-400">Scadenza: {{ el.data_scadenza }}</span>
                     <!-- data -->
                     <div v-show="edit_data[index]" class="relatieve p-2 mt-3">
                         <vue-tailwind-datepicker class="absolute inset-y-0 right-0 w-16" as-single placeholder="Scegli data"
@@ -55,16 +55,20 @@
                     <div class="flex mt-2 space-x-3 relative md:mt-6">
                         <!-- conferma modifica -->
                         <div v-if="edit_data[index]">
-                            <a @click="this.editElemento(el.id_prodotto, el.id_elemento, index)" href="#"
-                                class="mr-2 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-green-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">Conferma</a>
                             <a @click="edit_data[index] = false" href="#"
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-orange-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">Annulla</a>
+                                class="mr-3 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-orange-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">
+                                Annulla</a>
+                            <a @click="this.editElemento(el.id_prodotto.id_prodotto, el.id_elemento, index)" href="#"
+                                class=" inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-green-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">
+                                Conferma</a>
                         </div>
                         <div v-else>
                             <a @click="edit_data[index] = true" href="#"
-                                class="mr-2 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-orange-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">Modifica</a>
+                                class="mr-2 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-orange-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">
+                                Modifica</a>
                             <a @click="this.deleteElemento(el.id_prodotto, el.id_elemento)" href="#"
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-red-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">Elimina</a>
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-red-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">
+                                Elimina</a>
                         </div>
                     </div>
                 </div>
@@ -107,6 +111,7 @@ export default {
             //viene utilizzato per gestire la grafica della modifica
             edit_data: [],
             date_value: new Date(),
+            randomSlugDropdown: (Math.random() + 1).toString(36).substring(7)
         }
     },
     methods: {
@@ -150,7 +155,7 @@ export default {
 
         },
         //Modifica un elemento di un prodotto
-        editElemento(id_prodotto, id_elemento) {
+        editElemento(id_prodotto, id_elemento, indice) {
             
             const url = '/dispense/' + this.id_dispensa + '/prodotti/' + id_prodotto + '/elementi/' + id_elemento + '/'
             axios.put(url, {
@@ -168,11 +173,21 @@ export default {
             axios.delete('/dispense/' + this.id_dispensa + '/prodotti/' + id_prodotto + '/elementi/' + id_elemento + '/')
             .then(response => {
                 this.getElementi();
+                this.toggleDropdown();
             })
             .catch(error => {
                 console.log("errore elimina elemento" + error);
             });
 
+        },
+        toggleDropdown() {
+            // Nasconde il dropdown
+            this.$nextTick(() => {
+                const dropdown = document.getElementById('dropdown_' + this.randomSlugDropdown);
+                if (dropdown) {
+                dropdown.classList.add('hidden');
+                }
+            });
         },
 
     },

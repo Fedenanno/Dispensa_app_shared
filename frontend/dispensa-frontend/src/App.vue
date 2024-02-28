@@ -2,11 +2,11 @@
     <div class="flex flex-col min-h-screen">
         <navbar />
 
-        <div class="p-4 container mx-auto">
+        <div class="md:container md:mx-auto pb-10 h-auto ">
             <RouterView />
         </div>
 
-        <footer class="bg-white dark:bg-gray-900 mt-auto">
+        <footer class="w-full bg-white dark:bg-gray-900">
 
             <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
                 <div class="md:flex md:justify-between">
@@ -130,19 +130,17 @@ export default {
 </script>
 
 <style>
-html,
+html, body {
+  height: 100%;
+}
+
 body {
-    height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Aggiungiamo queste classi per creare un layout a due colonne */
-.flex-col {
-    display: flex;
-    flex-direction: column;
-}
-
-.mt-auto {
-    margin-top: auto;
+footer {
+  margin-top: auto;
 }
 </style>
 

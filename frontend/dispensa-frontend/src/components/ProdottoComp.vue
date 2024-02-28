@@ -91,16 +91,16 @@
         </div>
         <div class="flex items-center justify-between px-6 py-4">
             <div class="w-1/2">
-                <img class="rounded-lg" src="#" alt="Prodotto">
+                <img class="rounded-lg" src="https://picsum.photos/300/200" alt="Prodotto">
             </div>
-            <div class="w-1/2 pl-4">
+            <div class="w-1/2 pl-4 border-l border-black dark:border-white">
                 <!-- <h3 class="text-lg font-bold">{{ this.prodotto.nome_prodotto }}</h3> -->
-                <p class="text-gray-600 dark:text-gray-400">Codice: {{ this.prodotto.id_prodotto }}</p>
-                <p class="text-gray-600 dark:text-gray-400">Decrizione: {{ this.prodotto.descrizione_prodotto }}</p>
-                <p class="text-gray-600 dark:text-gray-400">Marca: {{ this.prodotto.marca_prodotto }}</p>
-                <p class="text-gray-600 dark:text-gray-400">Prezzo: {{ this.prodotto.prezzo }}</p>
-                <p class="text-gray-600 dark:text-gray-400">Categoria: {{ this.prodotto.categoria }} TODO</p>
-                <p class="text-gray-600 dark:text-gray-400">Inserito da: {{ this.prodotto.inserito_da }}</p>
+                <p class="text-lg text-gray-800 dark:text-gray-300">Codice: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.id_prodotto }}</span></p>
+                <p class="text-lg text-gray-800 dark:text-gray-300">Descrizione: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.descrizione_prodotto }}</span></p>
+                <p class="text-lg text-gray-800 dark:text-gray-300">Marca: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.marca_prodotto }}</span></p>
+                <p class="text-lg text-gray-800 dark:text-gray-300">Prezzo: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.prezzo }}</span></p>
+                <p class="text-lg text-gray-800 dark:text-gray-300">Categoria: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.categoria }}</span></p>
+                <p class="text-lg text-gray-800 dark:text-gray-300">Inserito da: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.inserito_da }}</span></p>
                 
             </div>
         </div>
@@ -115,10 +115,18 @@
                 {{ this.mostra_elementi ? 'Nascondi elementi' : 'Mostra elementi'  }}
             </button>
             <div class="space-x-2">
-                <button class="text-gray border border-gray-300 rounded-lg hover:bg-orange-400 py-2 px-4">
-                    Modifica
+                
+                <button v-if="this.confermaElimina" @click="this.confermaElimina = !this.confermaElimina" class="text-gray border bg-orange-400 border-orange-600 rounded-lg hover:bg-orange-400 py-2 px-4">
+                    Annulla
                 </button>
-                <button @click="this.eliminaProdotto" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg">
+                <!-- <button v-else class="text-gray border border-gray-300 rounded-lg hover:bg-orange-400 py-2 px-4">
+                    Modifica
+                </button> -->
+                
+                <button v-if="this.confermaElimina" @click="this.eliminaProdotto" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg">
+                    Confermi eliminazione?
+                </button>
+                <button v-else @click="this.confermaElimina = !this.confermaElimina" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg">
                     Elimina
                 </button>
             </div>
@@ -151,6 +159,7 @@ export default {
     data() {
         return {
             prodotto: null,
+            confermaElimina: false,
 
             //elementi
             mostra_elementi: false,
@@ -171,6 +180,7 @@ export default {
             try{
                 const response = await axios.delete('dispense/' + this.id_dispensa + '/prodotti/' + this.id_prodotto + '/')
                 this.prodotto = null
+                this.confermaElimina = false
             }catch(error){}
         }
         // async getElementi() {
