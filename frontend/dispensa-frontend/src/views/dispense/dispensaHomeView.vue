@@ -73,7 +73,10 @@
             </div>
         </div>
         <div class="inline-flex rounded-md  basis-1/6" role="group">
-            <button @click="this.modal_impostazioni.show()" type="button"
+            <button @click="
+                this.modal_impostazioni.show();
+                this.getUtentiCondivisione()
+                " type="button"
                 class="inline-flex items-left px-4 py-2 text-sm font-medium text-gray-900 bg-white border rounded-md border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
                 <svg aria-hidden="true" class="w-4 h-4 mr-2 fill-current" fill="currentColor" viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg">
@@ -261,7 +264,7 @@
 
                     <form class="space-y-4" @submit.prevent="">
                         
-                        
+                        <!-- cambio nome dispenas -->
                         <h3 class="font-semibold text-gray-900 dark:text-white">Nome dispensa:</h3>
                         <div class="relative">
                             <input v-model="this.nomeDispensa" type="search" id="default-search"
@@ -274,16 +277,54 @@
 
                         <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700 " />
 
-                        <!-- Aggiunta elemento -->
+                        <!-- Menu condivisione -->
                         <h3 class="font-semibold text-gray-900 dark:text-white">Condividi:</h3>
                         <div class="relative">
                             <input v-model="this.usernameUtenteCondivisione" type="search" id="default-search"
                                 class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Inserisci username..." required>
-                            <button @click="" type="submit"
+                            <button @click="this.gestioneUtenteCondivisione(this.usernameUtenteCondivisione, 'POST')" type="submit"
                                 class="text-white absolute right-2.5 bottom-2.5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 Condividi</button>
                         </div>
+
+                        <!-- utenti con cui è condivisa la dispensa -->
+                        <h3 class="mt-6 text-gray-900 dark:text-white">Utenti con cui è condivisa:</h3>
+                        <div class="mt-4 relative overflow-x-auto shadow-md sm:rounded-lg">
+                            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">
+                                            Username
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Tipo
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Azioni
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody v-if="this.utenti_condivisione.length > 0">
+                                    <tr v-for="(utente, indice) in utenti_condivisione"  class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            {{ utente }}
+                                        </th>
+                                        <td class="px-6 py-4">
+                                            TODO
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <a @click="this.gestioneUtenteCondivisione(utente, 'DELETE')" href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-600">
+                                                Elimina
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+
+                        
 
                     </form>
                 </div>
@@ -469,11 +510,39 @@ export default {
                 console.log(e)
             }
         },
+        // Gestione condivisione
         async getUtentiCondivisione(){
             try {
-                const response = await axios.get('dispense/' + this.id + '/prodotti/')
-                this.utenti_condivisione = response.data
-
+                const response = await axios.get('dispense/' + this.id + '/')
+                this.utenti_condivisione = response.data[0].user
+            } catch (e) {
+                console.log(e)
+            }
+        },
+        async gestioneUtenteCondivisione(username, method){
+            try {
+                if(username == '' || username == undefined){
+                    console.log("username non valido")
+                    return
+                }
+                if(method == 'DELETE'){
+                    const response = await axios.delete('dispense/' + this.id + '/shared/', {
+                        data : {
+                            username: username
+                        }
+                    })
+                    console.log(response)
+                    this.getUtentiCondivisione()
+                }
+                if(method == 'POST'){
+                    const response = await axios.post('dispense/' + this.id + '/shared/', {
+                        username: username
+                    })
+                    console.log(response)
+                    this.getUtentiCondivisione()
+                
+                }
+                
             } catch (e) {
                 console.log(e)
             }

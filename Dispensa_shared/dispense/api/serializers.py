@@ -32,10 +32,11 @@ class DispensaUserSerializer(serializers.ModelSerializer):
 
 class DispensaUserSharedSerializer(serializers.ModelSerializer):
 
+    username = serializers.CharField(source='id_user.username')  # Assicurati che il campo abbia lo stesso nome dell'attributo nel modello
+
     class Meta:
         model = DispensaUser
-        
-        fields = ['id_user']
+        fields = ['username']
 
 #-------- Categorie --------
 class CategorieSerializer(serializers.ModelSerializer):

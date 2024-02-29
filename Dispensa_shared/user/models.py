@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+#TODO: Impostare la mail come unica, ora solo l'username è unico
 class CustomUser(AbstractUser):
     #username = None
     #email = None

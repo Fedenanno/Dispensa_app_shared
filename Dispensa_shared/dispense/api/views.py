@@ -7,12 +7,14 @@ from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 
+
 from user.models import CustomUser
 
 from . import exceptions as exc
 from .permissions import DispensaIsShared, DispensaIsAdmin, DispensaIsSharedOrOwner, DispensaIsOwnerOrOnlyDelete, DispensaIsOwner, ProdottoIsInDispensa
 from dispense.models import Dispensa, DispensaUser, Categorie, Prodotti, Elementi
 from . import serializers as srz
+from user.models import CustomUser as User
 
 from .deamon import checkScadenze
 
@@ -194,9 +196,16 @@ class DispensaShareViewSet(viewsets.ModelViewSet):
         user = self.request.user
         dispensa = self.kwargs['id_dispensa']
         # campo gia controllato dal serializer
-        new_user = self.request.data['id_user']
+        new_user = self.request.data['username']
         admin_p = self.request.query_params.get('admin')
+        if not new_user:
+            return Response("Utente non specificato, campo <username> obbligatorio", status.HTTP_400_BAD_REQUEST)
 
+        if not User.objects.filter(username=new_user).exists():
+            raise exc.UserNotFound()
+        
+        new_user = User.objects.get(username=new_user).id
+                
 
         # controlla che la dispensa non sia già condivisa con l'utente
         if isShared(new_user, dispensa):
@@ -234,8 +243,16 @@ class DispensaShareViewSet(viewsets.ModelViewSet):
     def update(self, serializer, pk="id_dispensa", *args, **kwargs):
         user = self.request.user
         dispensa = self.kwargs['id_dispensa']
-        new_user = self.request.data['id_user']
+        new_user = self.request.data['username']
         admin_p = self.request.query_params.get('admin')
+
+        if not new_user:
+            return Response("Utente non specificato, campo <username> obbligatorio", status.HTTP_400_BAD_REQUEST)
+
+        if not User.objects.filter(username=new_user).exists():
+            raise exc.UserNotFound()
+        
+        new_user = User.objects.get(username=new_user).id
 
         #controlla che chi fa la richiesta sia il proprietario della dispensa
         if Dispensa.objects.get(id_dispensa=dispensa).inserito_da == user:
@@ -255,22 +272,25 @@ class DispensaShareViewSet(viewsets.ModelViewSet):
     def destroy(self, serializer, pk="id_dispensa", *args, **kwargs):
         user = self.request.user
         dispensa = self.kwargs['id_dispensa']
-        new_user = None
+        new_user = self.request.data['username']
 
         # controlla che l'utente che fa la richiesta sia chi ha creato la dipsensa (proprietario)
         if Dispensa.objects.get(id_dispensa=dispensa).inserito_da == user:
             #se viene passato il payload con l'id dell'utente da rimuovere
-            try:
-                new_user = self.request.query_params['id_user']
-            except:
-                new_user = None
+            print(new_user)
+            if new_user:
+                try:
+                    if not User.objects.filter(username=new_user).exists():
+                        raise exc.UserNotFound()
 
-            try:
-                if new_user is not None:
+                    new_user = User.objects.get(username=new_user).id
+                    if not DispensaUser.objects.filter(id_dispensa=dispensa, id_user=new_user).exists():
+                        raise exc.UserNotFound()
                     DispensaUser.objects.filter(id_dispensa=dispensa, id_user=new_user).delete()
                     return Response("Dispensa non piu condivisa con l'utente", status.HTTP_200_OK)
-            except:
-                return Response("rimozione utente fallita, riprova piu tardi", status.HTTP_400_BAD_REQUEST)
+                    
+                except:
+                    return Response("rimozione utente fallita, riprova piu tardi", status.HTTP_400_BAD_REQUEST)
     
             # altrimenti, rimuove tutte le entry con id_dispensa specificato dalla tabella DispensaUser tranne quella dove id_user = id_user
             try:
