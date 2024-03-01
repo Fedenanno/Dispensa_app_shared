@@ -99,7 +99,7 @@
         </h2>
         <!-- elementi -->
         <!-- TODO: non funziona la modifica della data se si cercano gli elementi per data -->
-        <ElementoComp :id_dispensa="this.id" :data_ricerca="data_oggi()"/>
+        <ElementoComp v-if="this.MostraListaElementi" :id_dispensa="this.id" :data_ricerca="data_oggi()"/>
 
 
         <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700 ">
@@ -118,7 +118,7 @@
             </div>
         </div>
         <!-- elementi data scelta-->
-        <ElementoComp v-if="this.elementi_data" :id_dispensa="this.id" :data_ricerca="this.dateValue['undefined']" />
+        <ElementoComp v-if="this.elementi_data && this.MostraListaElementi" :id_dispensa="this.id" :data_ricerca="this.dateValue['undefined']" />
 
 
         <!-- prodotti -->
@@ -161,7 +161,7 @@
                                 prodotto</label>
                             <input v-model="this.nuovo_prodotto.id_prodotto" type="number" id="codice_prodotto"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="name@company.com" required>
+                                placeholder="123456..." required>
                         </div>
                         <div v-if="!this.prodotto_esistente">
                             <div>
@@ -170,7 +170,7 @@
                                 <input v-model="this.nuovo_prodotto.nome_prodotto" type="string" name="number"
                                     id="nome_prodotto"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    placeholder="name@company.com" required>
+                                    placeholder="Frutta..." required>
                             </div>
                             <div>
                                 <label for="descrizione_prodotto"
@@ -178,7 +178,7 @@
                                 <input v-model="this.nuovo_prodotto.descrizione_prodotto" type="string"
                                     id="descrizione_prodotto"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    placeholder="name@company.com">
+                                    placeholder="Mela rossa...">
                             </div>
                             <div>
                                 <label for="marca_prodotto"
@@ -186,14 +186,14 @@
                                 <input v-model="this.nuovo_prodotto.marca_prodotto" type="string" name="number"
                                     id="marca_prodotto"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    placeholder="name@company.com">
+                                    placeholder="Melinda...">
                             </div>
                             <div>
                                 <label for="prezzo_prodotto"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white mt-3">Prezzo</label>
                                 <input v-model="this.nuovo_prodotto.prezzo" type="number" name="number" id="prezzo_prodotto"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                    placeholder="name@company.com">
+                                    placeholder="2€...">
                             </div>
                             <div>
                                 <label for="countries"
@@ -394,6 +394,7 @@ export default {
             //per elementi
             dateValue: new Date(), //data scelta per la ricerca degli elementi
             elementi_data: false, //indica se è stata inserita una data per la ricerca degli elementi
+            MostraListaElementi: true, //indica se devono essere mostrati i due componenti per la ricerca degli elementi
             //per prodotti
             prodotti_data: [],
             visualizza: 'elementi', //serve per visualizzare il menu corretto
@@ -471,6 +472,7 @@ export default {
 
             //infine controllo se la data elemento != data di default (quindi se è stata impostata), se si, aggiungo pure l'elemento
             if (this.data_nuovo_elemento.toString().split('').length < 16 && this.data_nuovo_elemento['undefined'].length != 0) {
+                this.MostraListaElementi = false
                 try {
                     const response = await axios.post('dispense/' + this.id + '/prodotti/' + this.nuovo_prodotto.id_prodotto + "/elementi/", {
                         data_scadenza: this.data_nuovo_elemento['undefined'].split("-").reverse().join("-"),
@@ -481,6 +483,7 @@ export default {
                     this.forceRerender()
 
                 } catch (e) { console.log("errore aggiunta elemento: " + e) }
+                this.MostraListaElementi = true
             }
             else
                 console.log("elemento non aggiunto")

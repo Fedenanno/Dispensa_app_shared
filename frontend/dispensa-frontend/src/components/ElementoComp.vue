@@ -58,7 +58,7 @@
                             <a @click="edit_data[index] = false" href="#"
                                 class="mr-3 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-orange-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">
                                 Annulla</a>
-                            <a @click="this.editElemento(el.id_prodotto.id_prodotto, el.id_elemento, index)" href="#"
+                            <a @click="this.editElemento(el.id_prodotto, el.id_elemento, index)" href="#"
                                 class=" inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-green-400 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">
                                 Conferma</a>
                         </div>
@@ -156,7 +156,10 @@ export default {
         },
         //Modifica un elemento di un prodotto
         editElemento(id_prodotto, id_elemento, indice) {
-            
+            if(this.data_ricerca){
+                id_prodotto = id_prodotto.id_prodotto
+            }
+            console.log(id_prodotto)
             const url = '/dispense/' + this.id_dispensa + '/prodotti/' + id_prodotto + '/elementi/' + id_elemento + '/'
             axios.put(url, {
                 data_scadenza: this.date_value['undefined'].split("-").reverse().join("-"),
@@ -170,6 +173,9 @@ export default {
 
         },
         deleteElemento(id_prodotto, id_elemento) {
+            if(this.data_ricerca){
+                id_prodotto = id_prodotto.id_prodotto
+            }
             axios.delete('/dispense/' + this.id_dispensa + '/prodotti/' + id_prodotto + '/elementi/' + id_elemento + '/')
             .then(response => {
                 this.getElementi();
