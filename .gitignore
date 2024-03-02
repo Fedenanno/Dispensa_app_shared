@@ -159,3 +159,12 @@ cython_debug/
 
 #firebase auth
 dispensa-shared-firebase.json
+
+#node dev and build
+node_modules/
+dist/
+build/
+dev-dist/
+
+#ENV
+.env

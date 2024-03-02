@@ -167,12 +167,24 @@ export default {
         }
     },
     methods: {
+        sendNotificaiont(type, message){
+            this.$toast.open({
+                message: message,
+                type: type,
+                position : 'top-left',
+                dismissible: true,
+                duration: 5000,
+                pauseOnHover: true
+
+            });
+        },
         async getProdotto() {
             try {
                 const response = await axios.get('dispense/' + this.id_dispensa + '/prodotti/' + this.id_prodotto + '/')
                 this.prodotto = response.data[0]
             }
             catch (error) {
+                this.sendNotificaiont('error', 'Errore durante il recupero del prodotto')
                 console.log("!!!!!!errore!!!" + error)
             }
         },
@@ -181,7 +193,10 @@ export default {
                 const response = await axios.delete('dispense/' + this.id_dispensa + '/prodotti/' + this.id_prodotto + '/')
                 this.prodotto = null
                 this.confermaElimina = false
-            }catch(error){}
+                this.sendNotificaiont('success', 'Prodotto eliminato con successo')
+            }catch(error){
+                this.sendNotificaiont('error', 'Errore durante l\'eliminazione del prodotto')
+            }
         }
         // async getElementi() {
         //     try {

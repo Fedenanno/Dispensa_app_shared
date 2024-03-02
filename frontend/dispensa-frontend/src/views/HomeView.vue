@@ -172,6 +172,18 @@ export default {
     }
   },
   methods: {
+    sendNotificaiont(type, message){
+      this.$toast.open({
+        message: message,
+        type: type,
+        position : 'top-left',
+        dismissible: true,
+        duration: 5000,
+        pauseOnHover: true
+
+      });
+    },
+
     async getDispense() {
       const response = await axios.get('dispense/')
       this.dispense = response.data
@@ -188,6 +200,7 @@ export default {
 
   beforeMount() {
     if (this.authStore.isAuthenticated)
+      this.sendNotificaiont('info', 'Benvenuto ' + this.authStore.user.user.username)
       this.getDispense()
   },
 

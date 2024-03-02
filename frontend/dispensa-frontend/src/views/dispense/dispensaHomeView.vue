@@ -72,6 +72,7 @@
                 </button>
             </div>
         </div>
+        <!-- posizione a destra -->
         <div class="inline-flex rounded-md  basis-1/6" role="group">
             <button @click="
                 this.modal_impostazioni.show();
@@ -119,7 +120,11 @@
         </div>
         <!-- elementi data scelta-->
         <ElementoComp v-if="this.elementi_data && this.MostraListaElementi" :id_dispensa="this.id" :data_ricerca="this.dateValue['undefined']" />
-
+        <!-- else mostra una scritta -->
+        
+        <div v-else class="md:container md:mx-auto">
+            <h4 class="mt-5 text-xl text-center font-medium dark:text-white">Seleziona una data!</h4>
+        </div>
 
         <!-- prodotti -->
         <!-- <div class="grid gap-4 grid-cols-3 pt-6"> -->
@@ -258,6 +263,7 @@
                     <span class="sr-only">Close modal</span>
                 </button>
 
+                <!-- impostazioni -->
                 <div class="px-6 py-6 lg:px-8">
                     <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Impostazioni
                     </h3>
@@ -267,7 +273,7 @@
                         <!-- cambio nome dispenas -->
                         <h3 class="font-semibold text-gray-900 dark:text-white">Nome dispensa:</h3>
                         <div class="relative">
-                            <input v-model="this.nomeDispensa" type="search" id="default-search"
+                            <input v-model="this.nomeDispensa" type="search" id="cambio_nome_dispensa_input"
                                 class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Cambia nome dispensa..." required>
                             <button @click="this.cambiaNomeDispensa()" type="submit"
@@ -280,7 +286,7 @@
                         <!-- Menu condivisione -->
                         <h3 class="font-semibold text-gray-900 dark:text-white">Condividi:</h3>
                         <div class="relative">
-                            <input v-model="this.usernameUtenteCondivisione" type="search" id="default-search"
+                            <input v-model="this.usernameUtenteCondivisione" type="search" id="condisione_utente_input"
                                 class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Inserisci username..." required>
                             <button @click="this.gestioneUtenteCondivisione(this.usernameUtenteCondivisione, 'POST')" type="submit"
@@ -335,7 +341,7 @@
     <!-- cerca / mostra lista prodotti -->
     <div v-if="this.visualizza == 'prodotti'" class="md:container md:mx-auto pb-10">
         <form @submit.prevent="">
-            <label for="default-search"
+            <label for="ricerca_prodotti_input"
                 class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -345,7 +351,7 @@
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <input v-model="this.ricerca" type="search" id="default-search"
+                <input v-model="this.ricerca" type="search" id="ricerca_prodotti_input"
                     class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Cerca prodotti..." required>
                 <!-- <button type="submit"
@@ -419,6 +425,17 @@ export default {
         }
     },
     methods: {
+        sendNotificaiont(type, message){
+            this.$toast.open({
+                message: message,
+                type: type,
+                position : 'top-left',
+                dismissible: true,
+                duration: 5000,
+                pauseOnHover: true
+
+            });
+        },
         async getProdotti() {
             try {
                 const response = await axios.get('dispense/' + this.id + '/prodotti/')
@@ -467,6 +484,7 @@ export default {
                 if (response < 300) {
                     this.prodotto_esistente = true
                     console.log("prodotto aggiunto")
+                    this.sendNotificaiont('info', 'Prodotto aggiunto alla dipensa!')
                 }
             }
 
@@ -479,6 +497,7 @@ export default {
                         id_prodotto: this.nuovo_prodotto.id_prodotto
                     })
                     console.log("elemento aggiunto")
+                    this.sendNotificaiont('success', 'Elemento aggiunto al prodotto '+this.nuovo_prodotto.nome_prodotto+'!')
                     // ricarico il componente che visualizza gli elementi scaduti, dopo l'aggiunta di un nuovo elemento
                     this.forceRerender()
 
@@ -508,6 +527,7 @@ export default {
                 })
                 this.$route.query.nome_dispensa = this.nomeDispensa
                 this.modal_impostazioni.hide()
+                this.sendNotificaiont('success', 'Nome dispensa cambiato correttamente!')
             }
             catch (e) {
                 console.log(e)
@@ -534,7 +554,7 @@ export default {
                             username: username
                         }
                     })
-                    console.log(response)
+                    this.sendNotificaiont('info', response.data)
                     this.getUtentiCondivisione()
                 }
                 if(method == 'POST'){
@@ -542,11 +562,17 @@ export default {
                         username: username
                     })
                     console.log(response)
-                    this.getUtentiCondivisione()
-                
+                    if(response.status == 201){
+                        this.sendNotificaiont('success', 'Utente '+response.data.username+' aggiunto con successo!')
+                        this.getUtentiCondivisione()
+                    }
                 }
                 
             } catch (e) {
+                if(e.response.status == 404)
+                        this.sendNotificaiont('error', 'Errore durante l\'aggiunta, utente non trovato!')
+                else
+                    this.sendNotificaiont('error', 'Errore generico: '+e.response.data.detail)
                 console.log(e)
             }
         }
@@ -570,10 +596,13 @@ export default {
     },
     watch: {
         dateValue: function (val, newVal) {
-
-            if (newVal.toString().split('').length > 16)
+            //if (newVal.toString().split('').length > 16){
+            if (this.dateValue['undefined'].length != 0){
+                console.log('Data ok')
+                // se sono diverse
                 this.elementi_data = true
-            else if (this.dateValue['undefined'].length == 0)
+            }
+            else
                 this.elementi_data = false
         },
         ricerca: function (val, newVal) {

@@ -115,6 +115,17 @@ export default {
         }
     },
     methods: {
+        sendNotificaiont(type, message){
+            this.$toast.open({
+                message: message,
+                type: type,
+                position : 'top-left',
+                dismissible: true,
+                duration: 5000,
+                pauseOnHover: true
+
+            });
+        },
         getElementi() {
             if (this.data_ricerca != null) {
                 this.getElementiInScadenza();
@@ -136,7 +147,9 @@ export default {
                     .catch(error => {
                         console.log(error);
                     });
-            } catch (error) { }
+            } catch (error) { 
+                this.sendNotificaiont('error', 'Errore durante il recupero degli elementi');
+            }
         },
         //prende gli elementi in base all'id del prodotto
         getElementiProdotto() {
@@ -151,6 +164,7 @@ export default {
                 })
                 .catch(error => {
                     console.log(error);
+                    this.sendNotificaiont('error', 'Errore durante il recupero degli elementi');
                 });
 
         },
@@ -165,9 +179,11 @@ export default {
                 data_scadenza: this.date_value['undefined'].split("-").reverse().join("-"),
             })
             .then(response => {
+                this.sendNotificaiont('success', 'Elemento modificato con successo');
                 this.getElementi();
             })
             .catch(error => {
+                this.sendNotificaiont('error', 'Errore durante la modifica dell\'elemento');
                 console.log("errore modifica elemento" + error);
             });
 
@@ -179,22 +195,15 @@ export default {
             axios.delete('/dispense/' + this.id_dispensa + '/prodotti/' + id_prodotto + '/elementi/' + id_elemento + '/')
             .then(response => {
                 this.getElementi();
-                this.toggleDropdown();
+                this.sendNotificaiont('success', 'Elemento eliminato con successo');
             })
             .catch(error => {
+                this.sendNotificaiont('error', 'Errore durante l\'eliminazione dell\'elemento');
                 console.log("errore elimina elemento" + error);
             });
 
         },
-        toggleDropdown() {
-            // Nasconde il dropdown
-            this.$nextTick(() => {
-                const dropdown = document.getElementById('dropdown_' + this.randomSlugDropdown);
-                if (dropdown) {
-                dropdown.classList.add('hidden');
-                }
-            });
-        },
+        
 
     },
     mounted() {
