@@ -3,7 +3,7 @@
         <navbar />
 
         <div class="px-4 md:container md:mx-auto pb-10 h-auto ">
-            <RouterView />
+            <RouterView :aggiornaDispense_="aggiornaDispense"/>
         </div>
 
         <footer class="w-full bg-white dark:bg-gray-900">
@@ -120,10 +120,78 @@ export default {
     components: {
         navbar,
     },
-    beforeCreate() {
+    data() {
+        return {
+            socket: null,
+            aggiornaDispense : 0,
+        }
+    },
+    methods: {
+        //metodo per chiudere la connessione websocket
+        socketOpen(user_id){
+            this.socket = new WebSocket(`ws://localhost:8000/ws/notifications/${user_id}/`);
+
+            this.socket.onopen = () => {
+                console.log('Connessione WebSocket aperta.');
+            };
+
+            this.socket.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                console.log('Notifica ricevuta:', message);
+                if(message.color == 'add'){
+                    this.sendNotificaiont('success', message.message)
+                }
+                else{
+                    this.sendNotificaiont('error', message.message)
+                }
+                this.aggiornaDispense += 1
+                
+            };
+
+            this.socket.onclose = () => {
+                console.log('Connessione WebSocket chiusa.');
+            };
+        },
+        sendNotificaiont(type, message){
+            this.$toast.open({
+                message: message,
+                type: type,
+                position : 'top-left',
+                dismissible: true,
+                duration: 5000,
+                pauseOnHover: true
+
+            });
+        },
+    },
+    beforeMount() {
         //inizializza lo store
         console.log("inizializzo user")
-        this.authStore.getUser();
+        this.authStore.getUser()
+        try{
+            if(this.authStore.isAuthenticated){
+                if(this.socket == null){
+                    if(this.authStore.user.user.username != undefined)
+                        this.socketOpen(this.authStore.user.user.username)
+                }
+            }
+        }catch(e){
+            console.log("errore apertura socker: "+e)
+        }
+    },
+    watch: {
+        //quando l'utente cambia, chiudo la connessione e la riapro con l'id dell'utente
+        'authStore.isAutenticated': function() {
+            console.log("cambio user")
+            if(this.authStore.isAuthenticated){
+                if(this.authStore.user.user.username != ubdefined){
+                    if(this.socket != null){
+                        this.socket.close()
+                    }
+                    this.socketOpen()
+                }
+            }
+        }
     },
 }
 

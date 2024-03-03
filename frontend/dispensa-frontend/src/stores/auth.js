@@ -41,8 +41,10 @@ export const useAuthStore = defineStore('auth', {
                 if (!tokenValido) {
                     this.removeUser()
                     console.log("token non valido, rimuovo utente")
+                    return null;
                 }
-                return;
+                else
+                    return this.authUser
             }
         },
         async login(username, password) {

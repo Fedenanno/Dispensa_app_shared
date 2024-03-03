@@ -389,7 +389,10 @@ export default {
         id: { //id della dispensa
             type: String,
             required: true
-        }
+        },
+        aggiornaDispense_ : {
+            type: Number
+        },
     },
     components: {
         ProdottoComp,
@@ -620,5 +623,5 @@ export default {
 </script>
 
 <style >
-@import "@/style.css"
+@import "@/style.css";
 </style>

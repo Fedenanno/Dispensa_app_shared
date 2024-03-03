@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
 
 from . import views as vw
@@ -6,6 +6,7 @@ from . import views as vw
 #router = DefaultRouter()
 
 urlpatterns = [
+
     #path per l'API /dispense/
     #?owner: true | false
     path('dispense/', vw.DispensaViewSet.as_view({'get': 'list', 'post': 'create'}), name='dispense'),

@@ -68,7 +68,10 @@ INSTALLED_APPS = [
     #"django_extensions",
 
     #per gesitire il Cross site scripting
-    'corsheaders'
+    'corsheaders',
+
+    #Socket - notification
+    'channels',
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -109,6 +112,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Dispensa_shared.wsgi.application'
+ASGI_APPLICATION = 'Dispensa_shared.asgi.application'
 
 
 # Database
@@ -118,6 +122,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': "channels.layers.InMemoryChannelLayer"
     }
 }
 

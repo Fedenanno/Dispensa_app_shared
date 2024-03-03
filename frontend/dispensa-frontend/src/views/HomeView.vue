@@ -13,7 +13,7 @@
                                                                 { id: dispensa.id_dispensa},
                                                                   query: 
                                                                 { nome_dispensa: dispensa.nome_dispensa } })"
-            class="bg-white dark:bg-slate-800 rounded-lg hover:bg-indigo-100 px-6 py-8 ring-1 ring-slate-900/5 shadow-xl">
+            class="bg-white dark:bg-slate-800 rounded-lg hover:bg-indigo-300 px-6 py-8 ring-1 ring-slate-900/5 shadow-xl">
 
             <div>
               <span class="inline-flex items-center justify-center p-2 bg-indigo-500 rounded-md shadow-lg">
@@ -159,11 +159,17 @@
 import { axios } from '@/common/axiosSetting'
 import { useAuthStore } from '@/stores/auth'
 import router from '@/router/index'
+import { watchEffect } from 'vue'; 
 
 export default {
   setup() {
     const authStore = useAuthStore();
     return { authStore };
+  },
+  props: {
+    aggiornaDispense_: {
+      type: Number
+    }
   },
   data() {
     return {
@@ -198,11 +204,25 @@ export default {
 
   },
 
-  beforeMount() {
-    if (this.authStore.isAuthenticated)
-      this.sendNotificaiont('info', 'Benvenuto ' + this.authStore.user.user.username)
-      this.getDispense()
+  mounted() {
+    watchEffect(() => {
+      // Assicurati che authStore non sia undefined
+      if (this.authStore && this.authStore.isAuthenticated && this.authStore.user != undefined) {
+        if(this.authStore.user.username == undefined){
+          this.sendNotificaiont('info', 'Benvenuto ' + this.authStore.user.user.username);
+        }
+        else
+          this.sendNotificaiont('info', 'Benvenuto ' + this.authStore.user.username);
+        this.getDispense();
+      }
+    });
   },
+  watch: {
+    aggiornaDispense_() {
+      this.getDispense();
+    }
+  }
+  
 
 }
 

@@ -24,7 +24,7 @@ class Dispensa(models.Model):
         verbose_name_plural = "Dispense"
 
     def __str__(self):
-        return "id: {}, nome: {}".format(self.id_dispensa, self.nome_dispensa)
+        return f"nome: {self.nome_dispensa}"
 
 
 #custom through model: from Dispenta to User, form M to N relationship

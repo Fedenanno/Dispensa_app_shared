@@ -48,15 +48,19 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/provaPulsante',
-      name: 'provaPulsante',
-      component: () => import('../views/provaView.vue'),
+      path: '/offllineView',
+      name: 'offllineView',
+      component: () => import('../views/offllineView.vue'),
     }
   ]
 })
 
 //routerguard per preventivo accesso a pagine non autorizzate
 router.beforeEach(async (to, from) => {
+  if (!navigator.onLine && to.path !== '/offllineView') {
+    // Se l'app è offline, reindirizza verso la pagina offline
+    return { name: 'offllineView' }
+  }
   const store = await useAuthStore()
   //se non è autenticato e non sta andando alla pagina di login, lo rimando io alla pagina di login
   if (!store.isAuthenticated && to.name !== 'login' && to.name !== 'register' && to.name !== 'home') {
