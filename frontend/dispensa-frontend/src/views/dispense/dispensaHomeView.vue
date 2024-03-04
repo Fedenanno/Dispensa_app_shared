@@ -275,7 +275,7 @@
                         <div class="relative">
                             <input v-model="this.nomeDispensa" type="search" id="cambio_nome_dispensa_input"
                                 class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Cambia nome dispensa..." required>
+                                placeholder="Cambia nome dispensa..." >
                             <button @click="this.cambiaNomeDispensa()" type="submit"
                                 class="text-white absolute right-2.5 bottom-2.5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 Cambia</button>
@@ -288,7 +288,7 @@
                         <div class="relative">
                             <input v-model="this.usernameUtenteCondivisione" type="search" id="condisione_utente_input"
                                 class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Inserisci username..." required>
+                                placeholder="Inserisci username..." >
                             <button @click="this.gestioneUtenteCondivisione(this.usernameUtenteCondivisione, 'POST')" type="submit"
                                 class="text-white absolute right-2.5 bottom-2.5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 Condividi</button>
@@ -328,6 +328,20 @@
                                     
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Elimina dispensa -->
+                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700 " />
+                        <!-- bottone -->
+                        <div class="flex space-x-5 justify-center">
+                            <button v-if="!this.eliminaDispensaControllo" @click="this.eliminaDispensaControllo = true" type="submit"
+                                class="flex items-center justify-center w-40 h-10 text-black bg-red-400 border border-gray-300 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                Elimina Dispensa
+                            </button>
+                            <button v-else @click="this.eliminaDispensa()" type="submit"
+                                class="flex items-center justify-center w-40 h-10 text-gray border border-gray-300 rounded-lg hover:bg-red-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                Confermi l'eliminazione?
+                            </button>
                         </div>
 
                         
@@ -424,7 +438,8 @@ export default {
             modal_impostazioni: null, //oggetto modal per le impostazioni
             nomeDispensa: this.$route.query.nome_dispensa,
             utenti_condivisione : [],
-            usernameUtenteCondivisione: ''
+            usernameUtenteCondivisione: '',
+            eliminaDispensaControllo: false,
 
         }
     },
@@ -588,6 +603,16 @@ export default {
                 const response = await axios.get("dispense/"+this.id+"/categorie/")
                 this.categorie = response.data
                 console.log(response.data)
+            } catch (e) {
+                console.log(e)
+            }
+        },
+        async eliminaDispensa(){
+            try {
+                const response = await axios.delete('dispense/' + this.id + '/')
+                this.modal_impostazioni.hide()
+                this.sendNotificaiont('success', 'Dispensa eliminata con successo!')
+                this.$router.push({ name: 'home' })
             } catch (e) {
                 console.log(e)
             }
