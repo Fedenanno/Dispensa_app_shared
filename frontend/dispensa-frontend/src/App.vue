@@ -130,7 +130,7 @@ export default {
     methods: {
         //metodo per chiudere la connessione websocket
         socketOpen(user_id){
-            this.socket = new WebSocket(`ws://192.168.1.233:8000/ws/notifications/${user_id}/`); //ws://localhost:8000/ws/notifications/${user_id}/
+            this.socket = new WebSocket(`ws://localhost:8000/ws/notifications/${user_id}/`); //ws://192.168.1.233:8000/ws/notifications/${user_id}/
 
             this.socket.onopen = () => {
                 console.log('Connessione WebSocket aperta.');
