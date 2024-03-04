@@ -12,9 +12,9 @@
                 <div class="md:flex md:justify-between">
                     <div class="mb-6 md:mb-0">
                         <a href="https://" class="flex items-center">
-                            <img :src="'../public/icon_pwa/512_icon.png'" class="h-8 mr-3" alt="Dispensa logo" />
+                            <img :src="'/icon_pwa/512_icon.png'" class="h-8 mr-3" alt="Dispensa logo" />
                             <span
-                                class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Dispensa online</span>
+                                class="self-center text-2xl font-semibold whitespace-nowrap text-gray-900">Dispensa online</span>
                         </a>
                     </div>
                     <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
@@ -55,8 +55,8 @@
                 </div>
                 <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
                 <div class="sm:flex sm:items-center sm:justify-between">
-                    <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 <a
-                            href="https://flowbite.com/" class="hover:underline">Flowbite™</a>. All Rights Reserved.
+                    <span class="text-sm text-gray-900 sm:text-center ">© {{ new Date().getFullYear() }} <a
+                            href="https://flowbite.com/" class="hover:underline">Dispensa Online</a>.
                     </span>
                     <div class="flex mt-4 space-x-6 sm:justify-center sm:mt-0">
                         <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
@@ -110,6 +110,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import navbar from '@/components/navbar.vue'
 import { useAuthStore } from '@/stores/auth'
+import { watchEffect } from 'vue'; 
 
 export default {
     setup() {
@@ -129,7 +130,7 @@ export default {
     methods: {
         //metodo per chiudere la connessione websocket
         socketOpen(user_id){
-            this.socket = new WebSocket(`ws://localhost:8000/ws/notifications/${user_id}/`);
+            this.socket = new WebSocket(`ws://192.168.1.233:8000/ws/notifications/${user_id}/`); //ws://localhost:8000/ws/notifications/${user_id}/
 
             this.socket.onopen = () => {
                 console.log('Connessione WebSocket aperta.');
@@ -137,12 +138,18 @@ export default {
 
             this.socket.onmessage = (event) => {
                 const message = JSON.parse(event.data);
-                console.log('Notifica ricevuta:', message);
+                // console.log('Notifica ricevuta:', message);
                 if(message.color == 'add'){
                     this.sendNotificaiont('success', message.message)
+                    if(Notification.permission === "granted"){
+                        this.sendSistemNotification('Dispensa Online', message.message)
+                    }
                 }
                 else{
                     this.sendNotificaiont('error', message.message)
+                    if(Notification.permission === "granted"){
+                        this.sendSistemNotification('Dispensa Online', message.message)
+                    }
                 }
                 this.aggiornaDispense += 1
                 
@@ -163,6 +170,16 @@ export default {
 
             });
         },
+        sendSistemNotification(title, text){
+            const notifTitle = title;
+            const notifBody = text;
+            const notifImg = `/icon_pwa/512_icon.png`;
+            const options = {
+                body: notifBody,
+                icon: notifImg,
+            };
+            new Notification(notifTitle, options);
+        }
     },
     beforeMount() {
         //inizializza lo store
@@ -178,6 +195,18 @@ export default {
         }catch(e){
             console.log("errore apertura socker: "+e)
         }
+    },
+    mounted(){
+        watchEffect(() => {
+            // Assicurati che authStore non sia undefined
+            if (this.authStore && this.authStore.isAuthenticated && this.authStore.user != undefined) {
+                if(this.authStore.user.username == undefined){
+                this.sendNotificaiont('info', 'Benvenuto ' + this.authStore.user.user.username);
+                }
+                else
+                this.sendNotificaiont('info', 'Benvenuto ' + this.authStore.user.username);
+            }
+        });
     },
     watch: {
         //quando l'utente cambia, chiudo la connessione e la riapro con l'id dell'utente

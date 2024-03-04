@@ -4,7 +4,7 @@
         <div class="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
             <h1 class="text-2xl font-bold mb-6 text-center">Registrati</h1>
             <br>
-            <h3 class=" mb-6 text-center">TODO implementare controlli su password, lunghezza, caratteri speciali etc.</h3>
+            <!-- <h3 class=" mb-6 text-center">TODO implementare controlli su password, lunghezza, caratteri speciali etc.</h3> -->
             <form @submit.prevent="register" class="w-full max-w-sm mx-auto bg-white p-8 rounded-md shadow-md">
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
@@ -71,14 +71,32 @@ export default {
         }
     },
     methods: {
+        sendNotificaiont(type, message){
+            this.$toast.open({
+                message: message,
+                type: type,
+                position : 'top-left',
+                dismissible: true,
+                duration: 5000,
+                pauseOnHover: true
+
+            });
+        },
         async register() {
             if (this.password !== this.confirmPassword) {
                 console.log("conferma password errata!")
                 return;
             }
-            await useAuthStore().register(this.name, this.email, this.password);
-            router.push('/login');
-        }
+            const response = await useAuthStore().register(this.name, this.email, this.password);
+            if(response === 'ok'){
+                this.sendNotificaiont('success', 'Registrazione avvenuta con successo! Ora puoi effettuare il login');
+                router.push('/login');
+                return
+            }
+
+            this.sendNotificaiont('error', response);
+        },
+        
     }
 
 }

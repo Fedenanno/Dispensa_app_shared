@@ -528,9 +528,11 @@ export default {
                 const response = await axios.put('dispense/' + this.id + '/', {
                     nome_dispensa: this.nomeDispensa
                 })
-                this.$route.query.nome_dispensa = this.nomeDispensa
+                
+                //this.$route.query.nome_dispensa = encodeURI(this.nomeDispensa)
                 this.modal_impostazioni.hide()
                 this.sendNotificaiont('success', 'Nome dispensa cambiato correttamente!')
+                this.$router.push({ name: 'dispenseHome', params: { id: this.id}, query: { nome_dispensa: this.nomeDispensa } })
             }
             catch (e) {
                 console.log(e)
@@ -548,6 +550,7 @@ export default {
         async gestioneUtenteCondivisione(username, method){
             try {
                 if(username == '' || username == undefined){
+                    this.sendNotificaiont('error', 'Inserisci un username valido!')
                     console.log("username non valido")
                     return
                 }
@@ -575,7 +578,7 @@ export default {
                 if(e.response.status == 404)
                         this.sendNotificaiont('error', 'Errore durante l\'aggiunta, utente non trovato!')
                 else
-                    this.sendNotificaiont('error', 'Errore generico: '+e.response.data.detail)
+                    this.sendNotificaiont('error', 'Errore generico: '+e.response.data)
                 console.log(e)
             }
         }

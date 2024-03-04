@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
+import mkcert from 'vite-plugin-mkcert'
 
 
 // https://vitejs.dev/config/
@@ -11,7 +12,9 @@ export default defineConfig({
     vue(),
     VitePWA({
       injectRegister: 'auto',
-      registerType: 'autoUpdate',
+      registerType: 'autoUpdate',//injectManifest
+      // srcDir: '/',
+      // filename: 'sw.js',
       devOptions: {
         enabled: true
       },
@@ -34,7 +37,8 @@ export default defineConfig({
         ]
           
       },
-    })
+    }),
+    mkcert(),
   ],
   resolve: {
     alias: {
@@ -43,5 +47,6 @@ export default defineConfig({
   },
   server: {
     host: true,
+    https: false,
   }
 })

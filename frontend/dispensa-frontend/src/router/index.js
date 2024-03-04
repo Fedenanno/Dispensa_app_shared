@@ -69,4 +69,9 @@ router.beforeEach(async (to, from) => {
   }
 })
 
+const DEFAULT_TITLE = 'Dispensa App';
+router.afterEach((to, from) => {
+  document.title = to.meta.title || DEFAULT_TITLE;
+});
+
 export default router

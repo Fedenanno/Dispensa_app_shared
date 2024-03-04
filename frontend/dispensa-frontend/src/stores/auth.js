@@ -56,10 +56,12 @@ export const useAuthStore = defineStore('auth', {
                 })
                 this.authUser = response.data.user
                 localStorage.setItem('user', JSON.stringify(response.data))
+                localStorage.setItem('id_user', response.data.user.username)
                 setHeader(response.data.token)
                 return true
             }
             catch (error) {
+                console.log("errore durante il login: " + error)
                 return false
             }
         },
@@ -71,11 +73,18 @@ export const useAuthStore = defineStore('auth', {
                     password,
                 })
                 //this.authUser = response.data.user
-                return response
+                return 'ok'
             }
             catch (error) {
                 if(error.response)
-                    console.log("errore in reg: "+ error.response)
+                    console.log("errore durante la registrazione: ")
+                if(error.response.data.username){
+                    return error.response.data.username[0]
+                }
+                else if(error.response.data.email)
+                    return error.response.data.email[0]
+                else
+                    return 'Errore generico'
             }
         },
         async logout() {

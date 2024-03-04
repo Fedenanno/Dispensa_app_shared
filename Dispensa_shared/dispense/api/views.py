@@ -283,10 +283,19 @@ class DispensaShareViewSet(viewsets.ModelViewSet):
                     if not User.objects.filter(username=new_user).exists():
                         raise exc.UserNotFound()
 
-                    new_user = User.objects.get(username=new_user).id
-                    if not DispensaUser.objects.filter(id_dispensa=dispensa, id_user=new_user).exists():
+                    new_user = User.objects.get(username=new_user)
+                    new_user_id = new_user.id
+                    new_user_username = new_user.username
+                    if not DispensaUser.objects.filter(id_dispensa=dispensa, id_user=new_user_id).exists():
                         raise exc.UserNotFound()
-                    DispensaUser.objects.filter(id_dispensa=dispensa, id_user=new_user).delete()
+
+                    #Se l'utente che fa la richiesta e quello che l ha creata non puo essere rimosso
+                    creat_disp = Dispensa.objects.get(id_dispensa=dispensa).inserito_da
+
+                    if str(creat_disp) == str(new_user_username):
+                        return Response("Non puoi rimuovere l'utente che ha creato la dispensa", status.HTTP_400_BAD_REQUEST)
+
+                    DispensaUser.objects.filter(id_dispensa=dispensa, id_user=new_user_id).delete()
                     return Response("Dispensa non piu condivisa con l'utente", status.HTTP_200_OK)
                     
                 except:

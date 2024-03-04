@@ -65,6 +65,28 @@
               </span>
               <span> Account </span>
             </li>
+            <!-- Notifiche On -->
+            <li v-if="this.statoNotifiche" class="px-3  py-3  text-sm font-medium flex items-center space-x-2 hover:bg-slate-400">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </span>
+              <span> Notifiche On </span>
+            </li>
+            <!-- Notifiche Off -->
+            <li v-else @click="this.abilitaNotifiche()" class="px-3  py-3  text-sm font-medium flex items-center space-x-2 hover:bg-slate-400">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </span>
+              <span> Abilita notifiche </span>
+            </li>
             <!-- Logout -->
             <li @click="this.logout"
               class="px-3  py-3 text-sm font-medium flex items-center space-x-2 hover:bg-slate-400">
@@ -110,6 +132,7 @@ export default {
   data() {
     return {
       showMenu: false,
+      statoNotifiche: false,
     }
   },
   methods: {
@@ -119,8 +142,33 @@ export default {
         this.authStore.logout();
         router.push({ name: 'home' });
       }
-    }
+    },
+    randomNotification() {
+      console.log('notifica random')
+      const notifTitle = 'Notifiche Dispensa';
+      const notifBody = `Notifiche abilitate con successo!`;
+      const notifImg = `/icon_pwa/512_icon.png`;
+      const options = {
+        body: notifBody,
+        icon: notifImg,
+      };
+      new Notification(notifTitle, options);
+      //setTimeout(this.randomNotification, 30000);
+    },
 
+    abilitaNotifiche(){
+      Notification.requestPermission().then((result) => {
+        if (result === "granted") {
+          console.log('notifiche abilitate')
+          this.statoNotifiche = true;
+          this.randomNotification();
+        }
+      });
+    },
+
+  },
+  mounted() {
+    this.statoNotifiche = Notification.permission === "granted"
   }
 }
 

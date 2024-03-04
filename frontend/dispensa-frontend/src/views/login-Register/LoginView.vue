@@ -126,16 +126,29 @@ export default {
     }
   },
   methods: {
+    sendNotificaiont(type, message){
+      this.$toast.open({
+        message: message,
+        type: type,
+        position : 'top-left',
+        dismissible: true,
+        duration: 5000,
+        pauseOnHover: true
+
+      });
+    },
     async login() {
       this.authStore.login(this.username, this.password).then(res => {
         if (res) {
           console.log("login ok")
+          this.sendNotificaiont('success', 'Login effettuato con successo!')
           router.push({ name: 'home' });
         }
         else{
           console.log("login fail")
-          this.testo_alert = 'Controlla i dati inseriti, Si fa distinzione tra maiuscole e minuscole!'
-          this.show_alert = true
+          this.sendNotificaiont('error', 'Login fallito, controlla i dati inseriti!')
+          // this.testo_alert = 'Controlla i dati inseriti, Si fa distinzione tra maiuscole e minuscole!'
+          // this.show_alert = true
         }
       })
 

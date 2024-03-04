@@ -3,7 +3,7 @@
 
     <!-- In caso di login -->
     <!-- v-if="this.authStore.isAuthenticated()" -->
-    <div v-show="authStore.user">
+    <div v-show="this.authStore.user">
       <div class="grid gap-4 grid-cols-3 grid-rows-3 pt-6">
 
         <!-- dispense dell'utente -->
@@ -24,8 +24,7 @@
             <h3 class="text-slate-900 dark:text-white mt-5 text-base font-medium tracking-tight">{{ dispensa.nome_dispensa
             }}</h3>
             <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm">
-              The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer
-              space.
+              Dispensa creata da {{ dispensa.inserito_da }} in data {{ new Date(dispensa.data_ora_creazione).toLocaleDateString() }}
             </p>
           </div>
           <!-- </router-link> -->
@@ -48,6 +47,8 @@
       </div>
     </div>
 
+
+    
     <!-- se l'utente non è loggato -->
     <div v-show="!authStore.user" class="bg-white dark:bg-gray-900">
       <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
@@ -159,7 +160,7 @@
 import { axios } from '@/common/axiosSetting'
 import { useAuthStore } from '@/stores/auth'
 import router from '@/router/index'
-import { watchEffect } from 'vue'; 
+
 
 export default {
   setup() {
@@ -189,6 +190,8 @@ export default {
 
       });
     },
+    
+    
 
     async getDispense() {
       const response = await axios.get('dispense/')
@@ -205,17 +208,7 @@ export default {
   },
 
   mounted() {
-    watchEffect(() => {
-      // Assicurati che authStore non sia undefined
-      if (this.authStore && this.authStore.isAuthenticated && this.authStore.user != undefined) {
-        if(this.authStore.user.username == undefined){
-          this.sendNotificaiont('info', 'Benvenuto ' + this.authStore.user.user.username);
-        }
-        else
-          this.sendNotificaiont('info', 'Benvenuto ' + this.authStore.user.username);
-        this.getDispense();
-      }
-    });
+    this.getDispense();
   },
   watch: {
     aggiornaDispense_() {
