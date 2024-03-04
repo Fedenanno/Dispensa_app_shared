@@ -614,6 +614,10 @@ export default {
                 this.sendNotificaiont('success', 'Dispensa eliminata con successo!')
                 this.$router.push({ name: 'home' })
             } catch (e) {
+                if(e.response.status == 403)
+                    this.sendNotificaiont('error', 'Non hai i permessi per eliminare questa dispensa!')
+                else
+                    this.sendNotificaiont('error', 'Errore generico, Riprova più tardi!')
                 console.log(e)
             }
         }
