@@ -54,6 +54,8 @@ class CategorieSerializer(serializers.ModelSerializer):
 class ProdottiSerializer(serializers.ModelSerializer):
         
     inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)
+    #Mostra il nome della categoria
+    id_categoria = serializers.CharField(source='id_categoria.nome_categoria', read_only=True)
         
     class Meta:
         model = Prodotti
@@ -61,6 +63,10 @@ class ProdottiSerializer(serializers.ModelSerializer):
         
     def get_inserito_da(self, obj):
         return obj.inserito_da.username
+    
+    def get_id_categoria(self, obj):
+        return obj.id_categoria.nome_categoria
+
     
 class ProdottiSerializerSemplice(serializers.ModelSerializer):
 

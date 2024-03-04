@@ -99,7 +99,7 @@
                 <p class="text-lg text-gray-800 dark:text-gray-300">Descrizione: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.descrizione_prodotto }}</span></p>
                 <p class="text-lg text-gray-800 dark:text-gray-300">Marca: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.marca_prodotto }}</span></p>
                 <p class="text-lg text-gray-800 dark:text-gray-300">Prezzo: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.prezzo }}</span></p>
-                <p class="text-lg text-gray-800 dark:text-gray-300">Categoria: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.categoria }}</span></p>
+                <p class="text-lg text-gray-800 dark:text-gray-300">Categoria: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.id_categoria }}</span></p>
                 <p class="text-lg text-gray-800 dark:text-gray-300">Inserito da: <span class="text-gray-600 dark:text-gray-400">{{ this.prodotto.inserito_da }}</span></p>
                 
             </div>
@@ -208,11 +208,11 @@ export default {
         //     }
         // },
     },
-    beforeMount() {
+    mounted() {
         this.getProdotto()
     },
-    updated() {
-        this.getProdotto()
-    }
+    // updated() {
+    //     this.getProdotto()
+    // }
 }
 </script>

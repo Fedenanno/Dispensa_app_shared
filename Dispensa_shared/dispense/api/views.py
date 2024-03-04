@@ -394,8 +394,12 @@ class ProdottiViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         if isAdmin(self):
-            if not sameDispensa(self) or not checkCategoria(self):
+            if not sameDispensa(self):
+                print("Utente non admin")
                 raise exc.UserHasNoPermission()
+            if not checkCategoria(self):
+                print("Categoria non trovata")
+                raise exc.CategoriaNotFound()
             serializer.save(id_dispensa=Dispensa.objects.get(id_dispensa=self.kwargs['id_dispensa']), inserito_da=self.request.user)
             return Response("Prodotto creato con successo", status.HTTP_200_OK)
         raise exc.UserIsNotAdmin()
