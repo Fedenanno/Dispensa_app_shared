@@ -56,8 +56,10 @@
           <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">La tua nuova dispensa digitale è qui!</h2>
           <p class="text-gray-500 sm:text-xl dark:text-gray-400">Un nuovo modo di gestire gli alimenti, che sia casa, ufficio o nel tuo ristorante. Che aspetti? Crea subito un account. hai già un account? login</p>
         </div>
+
+        <!-- Home da persnalizzare -->
         <div class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
-          <div>
+          <!-- <div>
             <div
               class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
               <svg class="w-5 h-5 text-primary-600 lg:w-6 lg:h-6 dark:text-primary-300" fill="currentColor"
@@ -146,7 +148,7 @@
             <h3 class="mb-2 text-xl font-bold dark:text-white">Operations</h3>
             <p class="text-gray-500 dark:text-gray-400">Keep your company’s lights on with customizable, iterative, and
               structured workflows built for all efficient teams and individual.</p>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
