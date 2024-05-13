@@ -304,7 +304,7 @@
                                             Username
                                         </th>
                                         <th scope="col" class="px-6 py-3">
-                                            Tipo
+                                            Admin
                                         </th>
                                         <th scope="col" class="px-6 py-3">
                                             Azioni
@@ -314,14 +314,17 @@
                                 <tbody v-if="this.utenti_condivisione.length > 0">
                                     <tr v-for="(utente, indice) in utenti_condivisione"  class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            {{ utente }}
+                                            {{ utente.user }}
                                         </th>
                                         <td class="px-6 py-4">
-                                            TODO
+                                            {{ (utente.admin)? 'Si' : 'No' }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            <a @click="this.gestioneUtenteCondivisione(utente, 'DELETE')" href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-600">
+                                            <a @click="this.gestioneUtenteCondivisione(utente.user, 'DELETE')" href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-600">
                                                 Elimina
+                                            </a><br>
+                                            <a v-if="!utente.admin" @click="this.gestioneUtenteCondivisione(utente.user, 'ADMIN')" href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-600">
+                                                Rendi Admin
                                             </a>
                                         </td>
                                     </tr>
@@ -343,9 +346,6 @@
                                 Confermi l'eliminazione?
                             </button>
                         </div>
-
-                        
-
                     </form>
                 </div>
             </div>
@@ -494,6 +494,7 @@ export default {
                 } catch (e) {
                     this.prodotto_esistente = false
                     console.log("il prodotto non esiste")
+                    this.sendNotificaiont('info', 'Il prodotto non esiste, crealo ora!')
                     return
                 }
             }
@@ -520,11 +521,21 @@ export default {
                     // ricarico il componente che visualizza gli elementi scaduti, dopo l'aggiunta di un nuovo elemento
                     this.forceRerender()
 
-                } catch (e) { console.log("errore aggiunta elemento: " + e) }
+                } catch (e) { 
+                    if (e.response.data && e.response.data.detail) {
+                        this.sendNotificaiont('error', e.response.data.detail)
+                        console.log('Messaggio di errore:', e.response.data.detail);
+                    } else {
+                        // Se la struttura del JSON è diversa, adatta questa parte
+                        console.log('Risposta di errore:', e.response.data);
+                        this.sendNotificaiont('error', 'errore durante l\'aggiunta dell\'elemento!')
+                    }
+                }
                 this.MostraListaElementi = true
             }
             else
                 console.log("elemento non aggiunto")
+                this.sendNotificaiont('success', 'Prodotto aggiunto alla dispensa!')
         },
         async nuovoProdotto() {
             //aggiunge un nuovo prodotto
@@ -558,7 +569,7 @@ export default {
         async getUtentiCondivisione(){
             try {
                 const response = await axios.get('dispense/' + this.id + '/')
-                this.utenti_condivisione = response.data[0].user
+                this.utenti_condivisione = response.data[0].users
             } catch (e) {
                 console.log(e)
             }
@@ -586,6 +597,16 @@ export default {
                     console.log(response)
                     if(response.status == 201){
                         this.sendNotificaiont('success', 'Utente '+response.data.username+' aggiunto con successo!')
+                        this.getUtentiCondivisione()
+                    }
+                }
+                if(method == 'ADMIN'){
+                    const response = await axios.put('dispense/' + this.id + '/shared/?admin=true', {
+                        username: username
+                    })
+                    console.log(response)
+                    if(response.status == 200){
+                        this.sendNotificaiont('success', 'Utente '+username+' reso admin!')
                         this.getUtentiCondivisione()
                     }
                 }

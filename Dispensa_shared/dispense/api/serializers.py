@@ -7,22 +7,29 @@ class DispensaSerializer(serializers.ModelSerializer):
 
     inserito_da = serializers.CharField(read_only=True)  #CustomUserSerializer(read_only=True)
     #In questo modo gli utenti non possono essere modificati
-    user = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='username'
-     )
+    # user = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
 
     class Meta:
         model = Dispensa
-        fields = '__all__'
-        read_only_fields = ['user']
+        exclude = ['user']
+        read_only_fields = ['users']
 
     def get_inserito_da(self, obj):
         return obj.inserito_da.username
     
     def get_user(self, obj):
         return obj.user.username
+    
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        
+        utenti = DispensaUser.objects.filter(id_dispensa=instance.id_dispensa)
+        user_data = [{'user': utente.id_user.username, 'admin': utente.admin} for utente in utenti]
+        
+        ret['users'] = user_data
+        
+        return ret
+        
 
 class DispensaUserSerializer(serializers.ModelSerializer):
 

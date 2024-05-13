@@ -157,13 +157,18 @@ export default {
     },
 
     abilitaNotifiche(){
-      Notification.requestPermission().then((result) => {
+      console.log("Richiesto permesso notifiche")
+      Notification.requestPermission()
+      .then((result) => {
         if (result === "granted") {
           console.log('notifiche abilitate')
           this.statoNotifiche = true;
           this.randomNotification();
         }
-      });
+      })
+      .catch((e) =>{
+        console.log("Errore: "+e)
+      })
     },
 
   },

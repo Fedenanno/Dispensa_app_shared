@@ -55,7 +55,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-xl font-medium text-gray-900 dark:text-white">
-                        Small modal
+                        Info
                     </h3>
                     <button @click="this.showModalInfo = false" type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -71,21 +71,20 @@
                 </div>
                 <!-- Modal body -->
                 <div class="p-6 space-y-6">
-                    <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                        With less than a month to go before the European Union enacts new consumer privacy laws for its
-                        citizens, companies around the world are updating their terms of service agreements to comply.
+                    <p class="text-xl font-bold leading-relaxed text-gray-500 dark:text-gray-400">
+                        Condividi Dispensa:
                     </p>
                     <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                        The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is
-                        meant to ensure a common set of data rights in the European Union. It requires organizations to
-                        notify users as soon as possible of high-risk data breaches that could personally affect them.
+                        La funzione di condivisione permette di condividere la dispensa con altri utenti. Questi potranno
+                        visualizzare e modificare la dispensa e i suoi prodotti.
+                        (La funzione è attivabile anche successivamente tramite il pulsante "Impostazioni")
                     </p>
                 </div>
                 <!-- Modal footer -->
                 <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
                     <button @click="this.showModalInfo = false" data-modal-hide="small-modal" type="button"
                         class="text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Close</button>
+                        Chiudi</button>
                 </div>
             </div>
         </div>
@@ -99,7 +98,7 @@
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Nome</label>
                     <input v-model="name"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                        type="text" id="name" name="name" placeholder="John Doe">
+                        type="text" id="name" name="name" placeholder="Dispensa di...">
                 </div>
                 <div class="flex items-center mb-4">
                     <input id="default-checkbox" type="checkbox" value=""
